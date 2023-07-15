@@ -1,0 +1,4 @@
+/Front/drivecode/node_modules
+/Front/drivecode/.gitignore
+/BackEnd/node_modules
+/BackEnd/.env

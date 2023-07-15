@@ -1,0 +1,293 @@
+.navbar{
+    font-size:17px;
+    line-height: 26px;
+    text-transform: capitalize;
+}
+
+a{
+    text-decoration: none !important;
+    padding: 2px;
+    color: black;
+}
+.navbar-nav{
+    gap: 20px;
+}
+.active{
+     border-bottom: 1px solid black;
+}
+.main{
+    width: 100%;
+    height: 80vh;
+}
+.ant-modal-content{
+    height:auto;
+}
+.scrollBar::-webkit-scrollbar{
+    width: 0%;
+}
+
+
+/* page not found */
+body {
+    background-color: #fbfbfb;
+  }
+  @media (min-width: 991.98px) {
+    main {
+      padding-left: 240px;
+    }
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 58px 0 0; /* Height of navbar */
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+    width: 240px;
+    z-index: 600;
+  }
+  
+  @media (max-width: 991.98px) {
+    .sidebar {
+      width: 100%;
+    }
+  }
+  .sidebar .active {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+  }
+  
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+  .container {
+    margin-top: 50px;
+  }
+  
+  .row {
+    display: flex;
+  }
+  
+  .col-8 {
+    flex: 1;
+
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  form {
+    width: 100%;
+    max-width: 400px;
+    margin: 15px auto;
+  }
+  
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea {
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid gray;
+    margin-bottom: 10px;
+  }
+  
+  textarea {
+    height: 44px;
+    resize: none;
+  }
+  
+  .form-control-file {
+    border: none;
+    height: 50px;
+    border: 1px solid gray;
+  }
+  
+  input[type="submit"] {
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .input-upload {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .ant-modal-title {
+    text-align: center;
+  }
+  
+  .ant-modal-footer {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .ant-modal-footer button {
+    margin-right: 10px;
+  }
+  
+  .register {
+    width: 100%;
+    height: 100vh;
+    padding: 10px;
+    /* overflow: scroll; */
+  
+  }
+  .register::-webkit-scrollbar{
+    width: 0%;
+  }
+  /* logina dn signup
+   */
+  
+  .signup-box {
+    width: 360px;
+    height: auto;
+    margin:auto;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid gray;
+    border-radius: 10px;
+  }
+  .signup-box p {
+    width: 90%;
+    width: 100%;
+    text-align: left;
+    font-size: 13px;
+  }
+  .login-box p {
+    width: 90%;
+    width: 100%;
+    text-align: left;
+    height: 80px;
+    font-size: 13px;
+  }
+  .login-box {
+    width: 360px;
+    height: auto;
+    margin: 50px auto;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid gray;
+    border-radius: 10px;
+  
+  }
+  
+  h1 {
+    text-align: center;
+    padding-top: 15px;
+  }
+  
+  h4 {
+    text-align: center;
+  }
+  
+  form {
+    width: 300px;
+    margin-left: 20px;
+  }
+  
+  form label {
+    display: flex;
+    margin-top: 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  form input {
+    width: 100%;
+    height: 30px;
+    padding: 7px;
+    border: none;
+    border: 1px solid gray;
+    border-radius: 6px;
+    outline: none;
+    font-size: 14px;
+  }
+  input[type="button"] {
+    width: 320px;
+    height: 35px;
+    margin-top: 20px;
+    border: none;
+    background-color: #3e56b6;
+    color: white;
+    font-size: 18px;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  p {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 15px;
+  }
+  .para-2 {
+    text-align: center;
+    color: white;
+    font-size: 15px;
+    margin-top: -10px;
+  }
+  .para-2 a {
+    color: #49c1a2;
+  }
+  
+  /* radio */
+  .radio{
+    width: 100%;
+    height: 20px;
+    display: flex;
+    padding: 7px;
+    gap:5px;
+  
+  }
+  .radio label{
+  font-size: 17px;
+  margin-top: -0.1px;
+  }
+  .radio input{
+    width: 15px;
+  }
+  
+  /* page */
+  .page{
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .page button{
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
+    border:1px solid gray;
+  }
+  
+  .page button i{
+    font-size: 25px;
+    margin-right: 10px;
+  }
