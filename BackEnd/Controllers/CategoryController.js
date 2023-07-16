@@ -2,7 +2,6 @@ const { default: slugify } = require("slugify");
 const { categories } = require("../Models/Category");
 
 const categoryController = async (req, res) => {
-console.log("hello"+req.body)
   try {
     const { name } = req.body;
 
@@ -105,7 +104,7 @@ const singleCategoryController = async (req, res) => {
 const deleteCategoryController = async (req, res) => {
   try {
     const { id } = req.body.id;
-    const category = await categories.deleteOne(id);
+    const category = await categories.deleteOne({ _id: id });
     res.status(200).send({
       message: "Category deleted successfully !",
       success: true,

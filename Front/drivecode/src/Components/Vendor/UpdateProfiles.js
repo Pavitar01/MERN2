@@ -5,29 +5,50 @@ import { Button, Modal, message } from "antd";
 import axios from "axios";
 import VendorPannel from "./VendorPannel";
 import { useNavigate } from "react-router-dom";
+
+const image_to_base64 = (imageFile) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(imageFile);
+  });
+};
+
 const UpdateProfiles = () => {
   const [auth, setAuth] = useAuth();
   const [all, setData] = useState("");
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [photo, setPhoto] = useState(null);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
+
   const handleOk = () => {
     setIsModalOpen(false);
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   useEffect(() => {
-    const a = async () => {
-      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
-        email: auth?.user?.email,
-      });
+    const fetchData = async () => {
+      const data = await axios.post(
+        "http://localhost:8000/api/auth/all-user",
+        {
+          email: auth?.user?.email,
+        }
+      );
       setData(data.data);
     };
-    a();
+    fetchData();
   }, []);
+
   const [formData, setFormData] = useState({
     name: all.name,
     email: auth.user.email,
@@ -36,11 +57,9 @@ const UpdateProfiles = () => {
     password: "",
     userType: 0,
     ans: "",
+    photo: null,
   });
 
-  const [photo, setPhoto] = useState(null);
-
-  //input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -53,20 +72,25 @@ const UpdateProfiles = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate form fields
 
-    if (!FormData.name || !formData.address) {
+    if (!formData.name || !formData.address) {
       messageApi.open({
         type: "warning",
-        content: "Please Fill feilds !",
+        content: "Please fill in all fields!",
       });
     } else {
-      messageApi.open({
-        type: "success",
-        content: "Profile updated successfully !",
-      });
+      let photoBase64 = null;
+      if (photo && photo.src) {
+        try {
+          const imageFile = await fetch(photo.src).then((response) =>
+            response.blob()
+          );
+          photoBase64 = await image_to_base64(imageFile);
+        } catch (error) {
+          console.log("Error converting image to Base64:", error);
+        }
+      }
 
-     
       const data = await axios.put(
         "http://localhost:8000/api/auth/update-profile",
         {
@@ -75,21 +99,32 @@ const UpdateProfiles = () => {
           name: formData.name,
           phone: formData.phoneNumber,
           address: formData.address,
+          photo: photoBase64,
         }
       );
-      navigate("/vendor-dashboard/update-profile")
-      setFormData.name("")
-      setFormData.address("")
+
+      if (data.data.success) {
+        messageApi.open({
+          type: "success",
+          content: "Profile updated successfully!",
+        });
+      } else {
+        messageApi.open({
+          type: "error",
+          content: "Error in updating profile!",
+        });
+      }
     }
   };
+
   return (
     <Middle>
       {contextHolder}
 
       <div className="container">
         <div className="row  mt-5">
-          <VendorPannel />
-          <div className="col-8" >
+          <VendorPannel url={all.photo}/>
+          <div className="col-8">
             <h1>Update Your Profile</h1>
             <form onSubmit={handleSubmit}>
               <label>Upload Image</label>
@@ -120,12 +155,12 @@ const UpdateProfiles = () => {
                 onChange={handleInputChange}
               />
 
-              <label>Email </label>
+              <label>Email</label>
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
-                value={formData.email}
+                value={auth.user.email}
                 readOnly
                 onChange={handleInputChange}
               />
@@ -138,7 +173,7 @@ const UpdateProfiles = () => {
                 readOnly
                 minLength={9}
                 maxLength={10}
-                value={formData.phoneNumber}
+                value={auth.user.phone}
                 onChange={handleInputChange}
               />
 
@@ -164,9 +199,10 @@ const UpdateProfiles = () => {
               >
                 setPass
               </Button>
+
               <Modal
                 title="Basic Modal"
-                open={isModalOpen}
+                visible={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
               >

@@ -34,7 +34,7 @@ try {
     }
     const price = item.price;
     const name = item.name;
-
+    const image=[item.image]
 
     if (cart) {
       // if cart exists for the user
@@ -46,7 +46,7 @@ try {
         productItem.quantity += quantity;
         cart.items[itemIndex] = productItem;
       } else {
-        cart.items.push({ productId, name, quantity, price });
+        cart.items.push({ productId, name, quantity, price,image });
       }
       cart.bill += quantity * price;
       cart = await cart.save();
@@ -55,7 +55,7 @@ try {
       // no cart exists, create one
       const newCart = await Cart.create({
         userId,
-        items: [{ productId, name, quantity, price }],
+        items: [{ productId, name, quantity, price,image }],
         bill: quantity * price,
       });
       return res.status(201).send(newCart);
@@ -87,6 +87,7 @@ const add_cart_item = async (req, res) => {
       email: user.email,
       phone: user.phone
     };
+ const image=item.image
 
     // Update the order of the product based on quantity
     item.orders += quantity;
@@ -102,7 +103,7 @@ const add_cart_item = async (req, res) => {
         productItem.quantity += quantity;
         cart.items[itemIndex] = productItem;
       } else {
-        cart.items.push({ productId, name, quantity, price, sellerId, userDetails });
+        cart.items.push({ productId, name, quantity, price, sellerId, userDetails, image });
       }
       cart.bill += quantity * price;
       cart = await cart.save();
@@ -111,7 +112,7 @@ const add_cart_item = async (req, res) => {
       // no cart exists, create one
       const newCart = await Cart.create({
         userId,
-        items: [{ productId, name, quantity, price, sellerId, userDetails }],
+        items: [{ productId, name, quantity, price, sellerId, userDetails, image }],
         bill: quantity * price,
       });
       return res.status(201).send(newCart);
@@ -121,6 +122,7 @@ const add_cart_item = async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 };
+
 
 
 const delete_item = async (req, res) => {

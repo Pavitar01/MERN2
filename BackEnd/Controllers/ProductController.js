@@ -1,12 +1,10 @@
 const fs = require("fs");
 const { Product } = require("../Models/ProductModel");
 const User = require("../Models/UserModels");
-
 const createProdutController = async (req, res) => {
   try {
     const {
       name,
-      image,
       des,
       price,
       quantity,
@@ -14,7 +12,9 @@ const createProdutController = async (req, res) => {
       Addedby,
       orders,
       status,
+      images,
     } = req.body;
+
     if (!name) {
       return res.status(422).json({ message: "Name is required" });
     }
@@ -24,11 +24,11 @@ const createProdutController = async (req, res) => {
     }
 
     if (!des) {
-      return res.status(422).json({ message: "description is required" });
+      return res.status(422).json({ message: "Description is required" });
     }
 
     if (!category) {
-      return res.status(422).json({ message: "category is required" });
+      return res.status(422).json({ message: "Category is required" });
     }
 
     if (!quantity) {
@@ -37,7 +37,6 @@ const createProdutController = async (req, res) => {
 
     const product = new Product({
       name: name,
-      image: image,
       des: des,
       status: status,
       price: price,
@@ -46,10 +45,15 @@ const createProdutController = async (req, res) => {
       Addedby: Addedby,
       orders: orders,
     });
+
+    if (images && Array.isArray(images)) {
+      product.image = images;
+    }
+
     await product.save();
 
     res.status(200).send({
-      message: "Product created successfully !",
+      message: "Product created successfully!",
       success: true,
       product,
     });
@@ -105,20 +109,20 @@ const productPhotoContoller = async (req, res) => {};
 //delete controller
 const deleteProductController = async (req, res) => {
   try {
-    const products = await Product.findByIdAndDelete(req.body.id);
+    const products = await Product.deleteOne({ _id: req.body.id });
     res.status(200).send({
-      message: "Product deleted successfully !",
+      message: "Product deleted successfully!",
       success: true,
-      products,
     });
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "Error in deleting  Photos!",
+      message: "Error in deleting product!",
       error,
     });
   }
 };
+
 
 //update product
 

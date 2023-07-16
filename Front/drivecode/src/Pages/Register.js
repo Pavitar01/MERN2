@@ -38,7 +38,10 @@ const Register = () => {
       );
 
       if (response.data.success) {
-        toast.success("Your account is created !");
+        messageApi.open({
+          type: 'success',
+          content: "Account is created "
+        });
         navigate("/signin");
         // Reset form fields
         setFormData({
@@ -50,14 +53,11 @@ const Register = () => {
           userType: 0,
           ans: "",
         });
-        messageApi.open({
-          type: 'error',
-          content: response.data.message,
-        });
+   
       } else {
         messageApi.open({
           type: 'error',
-          content: response.data.error,
+          content: response.data.message,
         });
       }
     } catch (error) {
@@ -132,7 +132,6 @@ const Register = () => {
           address: formData.address,
           ans: formData.ans,
           flag: 1,
-          photo: null,
         }
       );
       if (response.data.success) {
@@ -158,7 +157,7 @@ const Register = () => {
       } else {
         messageApi.open({
           type: 'error',
-          content: response.data.error
+          content: response.data.message
         });
       }
     } catch (error) {
@@ -203,7 +202,7 @@ const Register = () => {
           <input
             type="tel"
             name="phoneNumber"
-            placeholder="Phone Number"
+            placeholder="Please fill 10 digit number"
             required
             value={formData.phoneNumber}
             onChange={handleInputChange}
@@ -227,7 +226,7 @@ const Register = () => {
           <input
             type="password"
             name="password"
-            placeholder="At least 6 characters"
+            placeholder="Password"
             required
             value={formData.password}
             onChange={handleInputChange}
@@ -274,7 +273,7 @@ const Register = () => {
           <input
             type="submit"
             value="Submit"
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: "20px",height:"50px",padding:"10px" }}
           />
         </form>
         <p style={{ width: "100%", textAlign: "center" }}>

@@ -60,6 +60,7 @@ const EditProduct = () => {
                         price={i.price}
                         des={i.des}
                         pid={i._id}
+                        image={i.image}
                         addedBy={i.Addedby}
                         newstatus={i.status}
                         status={i.status === 0 ? "Published" : "Draft"}
@@ -68,7 +69,7 @@ const EditProduct = () => {
                   }
                 })
               ) : (
-                <h1>No Drafts product</h1>
+                <h1>No Publised product</h1>
               )}
             </div>
           </div>

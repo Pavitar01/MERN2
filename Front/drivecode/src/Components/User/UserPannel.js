@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Auth/Index";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const UserPannel = () => {
+const UserPannel = ({url}) => {
   const [auth, setAuth] = useAuth();
-
+  const [details,setDetails]=useState([])
+  useEffect(() => {
+    const a = async () => {
+      let val = localStorage.getItem("userAuth");
+      val = JSON.parse(val);
+      try {
+        const data = await axios.post(
+          "http://localhost:8000/api/product/get-vendor-by-id",
+          { id: val.user.id }
+        );
+        if (data?.data?.success) {
+          setDetails(data.data.user);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    a();
+  }, []);
+  console.log(details)
   return (
     <div className="col-4 ">
       <div
@@ -13,7 +33,7 @@ const UserPannel = () => {
       >
         <img
           className="card-img-top"
-          src="https://static.vecteezy.com/system/resources/previews/000/550/731/original/user-icon-vector.jpg"
+          src={details.photo}
           alt="Card image cap"
           style={{ width: "100px", height: "100px" }}
         />
@@ -30,7 +50,7 @@ const UserPannel = () => {
             className="card-title"
             style={{ textAlign: "center", width: "100%" }}
           >
-            {auth.user.name}
+            {details.name}
           </h6>
           <h6
             className="card-title"

@@ -48,7 +48,7 @@ productRouter.post(
 productRouter.get("/get-product", getProductController);
 productRouter.get("/get-product/:id", getSingleProduct);
 productRouter.get("/product-photo/:pid", productPhotoContoller);
-productRouter.delete("/delete-product", deleteProductController);
+productRouter.post("/delete-product", deleteProductController);
 productRouter.get("/all-venders", allVendorController);
 productRouter.put("/vender-status", updateVendorController);
 productRouter.post("/get-product-vendor", getVendorProductsController);

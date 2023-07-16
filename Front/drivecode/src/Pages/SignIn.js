@@ -102,11 +102,8 @@ const SignIn = () => {
         }
       );
   
-      if (response.data) {
-        messageApi.open({
-          type: 'success',
-          content: "Account is created !"
-        });
+      if (response.data.success) {
+   
         setAuth({
           ...auth,
           user: response.data.user,
@@ -181,7 +178,7 @@ const SignIn = () => {
           <input
             type="submit"
             value="Submit"
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: "20px",padding:"10px",height:"50px" }}
           />
         </form>
         {error ? (
@@ -238,27 +235,13 @@ const SignIn = () => {
       </p>
       <div
         className="login-box"
-        style={{ marginTop: "-10px", backgroundColor: "blue" }}
+        style={{ marginTop: "-10px",width:"250px",border:"none"}}
       >
-        <p
-          style={{
-            height: "50px",
-            fontSize: "13px",
-            fontWeight: 600,
-            boxSizing: "border-box",
-            display: "flex",
-            textAlign: "center",
-            justifyContent: "center",
-            padding: "10px",
-            marginTop: "-5px",
-          }}
-        >
-          <img
-            src="https://th.bing.com/th/id/OIP.qUnygM-B3aiUueZLqttGvAHaBg?pid=ImgDet&rs=1"
+           <img
+            src="https://i0.wp.com/www.tillerhq.com/wp-content/uploads/2019/08/Sign-in-with-Google-Button@2x.png?fit=374%2C86&ssl=1"
             style={{ width: "100%", height: "50px", cursor: "pointer" }}
             onClick={handleSignIn}
           />
-        </p>
       </div>
     </div>
   );

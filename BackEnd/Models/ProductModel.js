@@ -29,10 +29,11 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     image: {
-      type: Array
+      type: [String]
     },
     Addedby: {
       type: String,
+      default:"Admin"
     },
     status:{
       type : Number ,

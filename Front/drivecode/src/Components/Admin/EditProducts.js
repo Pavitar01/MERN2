@@ -53,6 +53,7 @@ const EditProducts = () => {
                     price={i.price}
                     des={i.des}
                     pid={i._id}
+                    image={i.image}
                     addedBy={i.Addedby}
                   />
                 );

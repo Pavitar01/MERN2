@@ -62,6 +62,7 @@ const Draft = () => {
                         des={i.des}
                         pid={i._id}
                         addedBy={i.Addedby}
+                        image={i.image}
                         newstatus={i.status}
                         status={i.status===0?"Published":"Draft"}
 

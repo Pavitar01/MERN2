@@ -9,11 +9,15 @@ const TrackComponent = () => {
       const currentHour = currentTime.getHours();
 
       if (currentHour >= 0 && currentHour < 12) {
-        setHeading("Good morning!");
+        setHeading("Good morning!" );
+
       } else if (currentHour >= 12 && currentHour < 18) {
         setHeading("Good afternoon!");
-      } else {
+      } else if(currentHour >= 18 && currentHour < 20) {
         setHeading("Good evening!");
+      }
+      else{
+        setHeading("Good night!") ;
       }
     };
 
@@ -29,7 +33,10 @@ const TrackComponent = () => {
   return (
     <>
       <h1>{heading}</h1>
-      <p style={{fontSize:"20px"}}>Dear customer ,<br/> Your Order is Arriving Soon !</p>
+    {heading==="Good morning!" &&   <p style={{fontSize:"20px"}}>Dear customer ,<br/>Your Order is out for Delivery</p>}
+    {heading==="Good afternoon!" &&   <p style={{fontSize:"20px"}}>Dear customer ,<br/> Your Order is Arriving Soon !</p>}
+    {heading==="Good evening!" &&   <p style={{fontSize:"20px"}}>Dear customer ,<br/>Your Order is Delivered</p>}
+    {heading==="Good night!" &&   <p style={{fontSize:"20px"}}>Dear customer ,<br/>Give us a feedback !</p>}
       <div class="wrap" style={{borderBottom:"10px solid black"}}>
         <img
           class="image truck-img"

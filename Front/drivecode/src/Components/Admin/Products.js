@@ -1,34 +1,99 @@
 import React, { useEffect, useState } from "react";
 import Middle from "../Middle";
-import AdminPannel from "./AdminPannel";
 import axios from "axios";
-
 import { Select } from "antd";
 import { useAuth } from "../../Auth/Index";
+import AdminPannel from "./AdminPannel";
+
 const { Option } = Select;
 
-const Products = () => {
+const AddProducts = () => {
   const [cat, setCat] = useState([]);
   const [category, setCategory] = useState("");
   const [name, setName] = useState("");
-  const [file, setFile] = useState("");
   const [des, setDes] = useState("");
   const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
   const [Err, setErr] = useState("");
-  const [auth, setAuth] = useAuth();
+  const [auth] = useAuth();
+  const [photos, setPhotos] = useState([]);
 
-  //fomrmdata
-  const setimgfile = (e) => {
-    setFile(e.target.files[0]);
+  const [details, setDetails] = useState([]);
+
+  const image_to_base64 = (imageFile) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(imageFile);
+    });
   };
 
-  console.log(file);
-  //handlesubmit
+  const handlePhotoUpload = (e) => {
+    const fileArray = Array.from(e.target.files).map((file) => ({
+      src: URL.createObjectURL(file),
+      alt: file.name,
+    }));
+    setPhotos(fileArray);
+  };
 
   const handleSubmit = async (e) => {
-    var formData = new FormData();
-    formData.append("photo", file);
+    e.preventDefault();
+
+    try {
+      if (!name || !des || !price || !quantity || photos.length === 0) {
+        setErr("All fields are required!");
+        return;
+      }
+
+      const photoBase64Array = await Promise.all(
+        photos.map(async (photo) => {
+          try {
+            const imageFile = await fetch(photo.src).then((response) =>
+              response.blob()
+            );
+            const photoBase64 = await image_to_base64(imageFile);
+            return photoBase64;
+          } catch (error) {
+            console.log("Error converting image to Base64:", error);
+          }
+        })
+      );
+      let val = localStorage.getItem("userAuth");
+      val = JSON.parse(val);
+      const data = await axios.post(
+        "http://localhost:8000/api/product/create-product",
+        {
+          name,
+          images: photoBase64Array,
+          des,
+          price,
+          status: 0,
+          quantity,
+          category,
+          Addedby: val.user.id,
+          order: 0,
+        }
+      );
+
+      if (data.data.success) {
+        setErr("Product Added Successfully!");
+        setQuantity(1);
+        setName("");
+        setDes("");
+        setPrice("");
+        setPhotos([]);
+      } else {
+        setErr(data.data.message);
+      }
+    } catch (err) {
+      setErr("Something went wrong!");
+    }
+  };
+
+  const onhandledraft = async (e) => {
     e.preventDefault();
 
     try {
@@ -37,48 +102,52 @@ const Products = () => {
         !des ||
         !price ||
         !quantity ||
-        file === null
-        // p2 === null ||
-        // p3 === null ||
-        // p4 == null
+        !category ||
+        photos.length === 0
       ) {
-        setErr("all feilds are required !");
+        setErr("All fields are required!");
+        return;
       }
-
+      let val = localStorage.getItem("userAuth");
+      val = JSON.parse(val);
       const data = await axios.post(
         "http://localhost:8000/api/product/create-product",
         {
           name,
-          image: file,
+          images: null,
           des,
           price,
+          status: 1,
           quantity,
           category,
-          addedby: auth?.user?.email,
+          Addedby: val.user.id,
+
           order: 0,
         }
       );
+
       if (data.data.success) {
-        setErr("Product Added Successfully !");
-        setFile(null);
+        setErr("Product Added Successfully!");
         setQuantity(1);
         setName("");
         setDes("");
         setPrice("");
+        setPhotos([]);
       } else {
         setErr(data.data.message);
       }
     } catch (err) {
-      setErr("Something went Wrong!");
+      setErr("Something went wrong!");
     }
   };
 
   useEffect(() => {
-    const a = async () => {
+    const fetchCategories = async () => {
       try {
         const data = await axios.get(
           "http://localhost:8000/api/category/all-categories"
         );
+
         if (data?.data?.success) {
           setCat(data?.data?.category);
         }
@@ -86,12 +155,14 @@ const Products = () => {
         console.log(error);
       }
     };
-    a();
+
+    fetchCategories();
   }, []);
+
   return (
     <Middle>
       <div className="container" style={{ display: "flex", width: "100%" }}>
-        <div className="row  mt-5">
+        <div className="row mt-5">
           <AdminPannel />
           <div
             className="col-5"
@@ -114,92 +185,92 @@ const Products = () => {
                     setCategory(value);
                   }}
                 >
-                  {cat?.map((i, index) => {
-                    return (
-                      <Option key={index} value={i.name}>
-                        {i.name}
-                      </Option>
-                    );
-                  })}
+                  {cat?.map((category) => (
+                    <Option key={category._id} value={category.name}>
+                      {category.name}
+                    </Option>
+                  ))}
                 </Select>
                 <div className="form-group">
-                  <label for="exampleFormControlInput1">Product Name</label>
+                  <label htmlFor="productName">Product Name</label>
                   <input
                     type="text"
                     className="form-control"
                     value={name}
-                    id="exampleFormControlInput1"
+                    id="productName"
                     onChange={(e) => {
                       setName(e.target.value);
                     }}
                   />
-                  <label for="exampleFormControlInput1">Price</label>
-
+                  <label htmlFor="productPrice">Price</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
-                    id="exampleFormControlInput1"
+                    id="productPrice"
                     value={price}
                     onChange={(e) => {
                       setPrice(e.target.value);
                     }}
                   />
-                  <label for="exampleFormControlSelect1">Select quantity</label>
-                  <select
+                  <label htmlFor="productQuantity">Select quantity</label>
+                  <input
+                    type="number"
                     className="form-control"
-                    id="exampleFormControlSelect1"
-                    value={Option.value}
+                    id="productQuantity"
+                    value={quantity}
                     onChange={(e) => {
                       setQuantity(e.target.value);
                     }}
-                  >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
-                  </select>
+                  />
                 </div>
-
                 <div className="form-group">
-                  <label for="exampleFormControlTextarea1">Description</label>
+                  <label htmlFor="productDescription">Description</label>
                   <textarea
                     onChange={(e) => {
                       setDes(e.target.value);
                     }}
                     value={des}
                     className="form-control"
-                    id="exampleFormControlTextarea1"
+                    id="productDescription"
                     rows="3"
                   ></textarea>
                 </div>
                 <div style={{ display: "flex" }}>
                   <input
+                    onChange={handlePhotoUpload}
                     type="file"
-                    onChange={setimgfile}
-                    name="image"
-                    className="form-control-file"
-                    id="exampleFormControlFile1"
-                    style={{ border: "none", height: "50px" }}
                     multiple
+                    className="form-control-file"
+                    id="productImages"
+                    style={{
+                      border: "none",
+                      height: "50px",
+                      border: "1px solid gray",
+                    }}
                   />
                 </div>
                 <p>{Err}</p>
                 <button
                   type="submit"
                   className="btn btn-primary mb-2"
-                  style={{ width: "100%" }}
+                  style={{ width: "50%" }}
                 >
                   Add Product
+                </button>
+                <button
+                  onClick={onhandledraft}
+                  className="btn btn-danger mb-2"
+                  style={{ width: "50%" }}
+                >
+                  Draft Product
                 </button>
               </form>
             </div>
           </div>
-          {/* <img src="https://th.bing.com/th/id/OIP.gRKRV2CE6NViDJXwdJOziQHaH4?pid=ImgDet&rs=1" alt="img" style={{width:"200px",height:"200px"}}/> */}
         </div>
       </div>
     </Middle>
   );
 };
 
-export default Products;
+export default AddProducts;

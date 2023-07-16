@@ -113,7 +113,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
                     aria-current="page"
                     to="/best-seller"
                   >
-                    Best Sellers
+                    Best Sellings
                   </NavLink>
                 </li>
               </>

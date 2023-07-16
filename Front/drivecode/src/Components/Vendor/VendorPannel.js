@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import Middle from "../Middle";
 import axios from "axios";
 
-const VendorPannel = () => {
+
+const VendorPannel = ({url}) => {
   const [auth, setAuth] = useAuth();
   const [details,setDetails]=useState({})
+   
   useEffect(() => {
     const a = async () => {
       let val = localStorage.getItem("userAuth");
@@ -33,7 +35,7 @@ const VendorPannel = () => {
       >
         <img
           className="card-img-top"
-          src="https://static.vecteezy.com/system/resources/previews/000/550/731/original/user-icon-vector.jpg"
+          src={details.photo}
           alt="Card image cap"
           style={{ width: "100px", height: "100px" }}
         />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Modal, Select, Tag, message } from "antd";
+import { Button, Card, Carousel, Modal, Select, Tag, message } from "antd";
 import Meta from "antd/es/card/Meta";
 import axios from "axios";
 const Cards = ({
@@ -12,7 +12,8 @@ const Cards = ({
   addedBy,
   orders,
   status,
-  newstatus
+  newstatus,
+  image
 }) => {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -21,21 +22,22 @@ const Cards = ({
   const [newStatus, setNewStatus] = useState(newstatus);
   const [newPrice, setNewPrice] = useState(price);
   const [newQuantity, setNewQuantity] = useState(quantity);
-
   const showModal = () => {
     setOpen(true);
   };
 
   const handleChange = (value) => {
-    setNewStatus(value)
+    setNewStatus(value);
   };
   const [messageApi, contextHolder] = message.useMessage();
   const success = async () => {
     try {
-      const data = await axios.delete(
+      const data = await axios.post(
         `http://localhost:8000/api/product/delete-product`,
         { id: pid }
+
       );
+
       if (data.data.success) {
         messageApi.open({
           type: "success",
@@ -53,6 +55,7 @@ const Cards = ({
       });
     }
   };
+
   const handleOk = async () => {
     setConfirmLoading(true);
 
@@ -96,17 +99,23 @@ const Cards = ({
   return (
     <Card
       hoverable
-      style={{ width: 210, height: 500, margin: "10px" }}
+      style={{ width: 300, height: 500, margin: "10px" }}
       cover={
-        <img
-          alt="shirt"
-          src="https://th.bing.com/th/id/OIP.O3Kd9pCHrSo94vlB4w61KAHaKM?w=186&h=256&c=7&r=0&o=5&pid=1.7"
-        />
+        <Carousel autoplay>
+
+          {image.map((i, index) => {
+            return (
+              <div key={index}>
+                <img src={i} style={{ width: "300px" }} />
+              </div>
+            );
+          })}
+        </Carousel>
       }
     >
       {contextHolder}
 
-      <h4 style={{ textAlign: "left" }}>{price}&#x20B9;</h4>
+      <h4 style={{ textAlign: "left" }}>&#x20B9;{price}</h4>
 
       <Meta title={name} description={des} />
       <Tag color="blue" style={{ fontSize: "10px", marginTop: "5px" }}>

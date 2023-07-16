@@ -106,10 +106,7 @@ const Category = () => {
                             deleteCategory(i._id);
                           }}
                         ></i>
-                        <i
-                          class="fa-solid fa-pen-to-square"
-                          style={{ cursor: "pointer", marginLeft: "20px" }}
-                        ></i>
+                       
                       </td>
                     </tr>
                   );

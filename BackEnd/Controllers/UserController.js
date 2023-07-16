@@ -25,12 +25,12 @@ const registerController = async (req, res) => {
     const foundUserByEmail = await User.findOne({ email });
     const foundUserByPhone = await User.findOne({ phone: phone });
     if (foundUserByEmail) {
-      return res.send({ message: "Mail already exists", success: true });
+      return res.send({ message: "Mail already exists", success: false });
     }
     if (foundUserByPhone) {
       return res.send({
         message: "Phone Number already exists",
-        success: true,
+        success: false,
       });
     }
 
@@ -207,25 +207,40 @@ const adminDashBoardController = async (req, res) => {
 //update profile
 
 const updateProfileController = async (req, res) => {
-  // const { email, name, phone, address, password } = req.body;
-
   try {
-   
-    await User.findOne({ email: req.body.curreemail }).then((resp) => {
-      resp.email = req.body.email;
-      resp.name = req.body.name;
-      resp.phone = req.body.phone;
-      resp.address = req.body.address;
-      return resp.save();
-    });
+    const { curreemail, email, name, phone, address, photo } = req.body;
+
+    const user = await User.findOne({ email: curreemail });
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    
+    user.email = email;
+    user.name = name;
+    user.phone = phone;
+    user.address = address;
+
+    if (photo) {
+      user.photo = photo;
+    }
+
+    await user.save();
+
     res.status(200).send({
-      message: "Details updated Changed!",
       success: true,
+      message: "Profile updated successfully!",
     });
   } catch (error) {
+    console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in Updating",
+      message: "Error in updating profile",
+      error: error,
     });
   }
 };

@@ -84,7 +84,7 @@ const BestSeller = () => {
     <Middle>
       <div className="container-fluid" style={{ display: "flex" }}>
         <div className="col-12">
-          <h1 style={{ textAlign: "center" }}>BEST SELLERS</h1>
+          <h1 style={{ textAlign: "center" }}>BEST SELLING PRODUCTS</h1>
           <p> ( Product have more than five sales )</p>
           <div style={{ display: "flex" }}>
             {prod.length !== 0 ? (

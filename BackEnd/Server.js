@@ -15,7 +15,8 @@ const OrderRouter = require("./Routes/OrderRoutes");
 app.use(cors());
 app.use(bodyParser.json());
 
-
+app.use(bodyParser.json({ limit: '500mb' }));
+app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 //mongo DB
 
 const db = mongoose

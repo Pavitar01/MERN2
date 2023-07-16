@@ -10,6 +10,7 @@ import {
   Tag,
   message,
   Select,
+  Carousel,
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -18,53 +19,80 @@ const Cart = () => {
   const [cart, setCart] = useState([]);
   const [cart2, setCart2] = useState([]);
   const [dis, setDis] = useState(0);
-  const [counter, setCounter] = useState(1);
+  const [counter, setCounter] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const handleChange = (value) => {
     setDis(value);
   };
   const navigate = useNavigate();
-  const handleClick1 = () => {
-    // Counter state is incremented
-    setCounter(counter + 1);
+  const handleClick1 = (productId, price) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.productId === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+    setCounter((prevCounter) => ({
+      ...prevCounter,
+      [productId]: (prevCounter[productId] || 0) + 1
+    }));
   };
 
-  // Function is called everytime decrement button is clicked
-  const handleClick2 = () => {
-    // Counter state is decremented
-    setCounter(counter - 1);
+  const handleClick2 = (productId, price) => {
+    setCart((prevCart) =>
+      prevCart.map((item) => {
+        if (item.productId === productId && item.quantity > 0) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      })
+    );
+    setCounter((prevCounter) => ({
+      ...prevCounter,
+      [productId]: (prevCounter[productId] || 0) - 1
+    }));
   };
 
-  const handleDelete = async (i) => {
+  const handleDelete = async (productId) => {
     let val = localStorage.getItem("userAuth");
     val = JSON.parse(val);
-    const data = await axios.delete(
-      `http://localhost:8000/api/cart-item/cart/${val.user.id}/${i.productId}`
-    );
-    if (data.data.success) {
-      setCart(data.data.cart.items);
-    } else {
-      console.log("Failed in deleting!");
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/api/cart-item/cart/${val.user.id}/${productId}`
+      );
+      if (response.data.success) {
+        setCart(response.data.cart.items);
+      } else {
+        console.log("Failed in deleting!");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    const a = async () => {
+    const fetchData = async () => {
       let val = localStorage.getItem("userAuth");
       val = JSON.parse(val);
-      const data = await axios.get(
-        `http://localhost:8000/api/cart-item/cart/${val.user.id}`
-      );
-      if (data.data.success) {
-        setCart2(data.data.cart);
-        setCart(data.data.cart.items);
-      } else {
-        console.log("Failed in fetching!");
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/cart-item/cart/${val.user.id}`
+        );
+        if (response.data.success) {
+          setCart2(response.data.cart);
+          setCart(response.data.cart.items);
+        } else {
+          console.log("Failed in fetching!");
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
 
-    a();
+    fetchData();
   }, []);
+
   const [open, setOpen] = useState(false);
   const hide = () => {
     setOpen(false);
@@ -72,6 +100,7 @@ const Cart = () => {
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
+  console.log(cart);
 
   const placeOrder = async () => {
     let val = localStorage.getItem("userAuth");
@@ -82,10 +111,10 @@ const Cart = () => {
         type: "error",
         content: "Please Add Products",
       });
-    } else if (address == "") {
+    } else if (address === "") {
       messageApi.open({
         type: "success",
-        content: "your Order is With Us !",
+        content: "Your Order is With Us!",
       });
       navigate("/user/profile");
     } else {
@@ -94,207 +123,210 @@ const Cart = () => {
         content: "Address is already saved with us!",
       });
       try {
-        const data = await axios.post(
+        const response = await axios.post(
           `http://localhost:8000/api/order/orders`,
           { id: cart2._id }
         );
 
-        if (data.data.success) {
+        if (response.data.success) {
           setCart([]);
           messageApi.open({
             type: "success",
-            content: "Order has placed successFully!, Check your Orders",
+            content: "Order has been placed successfully! Check your Orders",
           });
         }
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.log(error);
       }
     }
   };
-
-  //open modal for edit
-
-  //modal
-
-  const [newProd, setNewProd] = useState("");
-  const [newPrice, setNewPrice] = useState("");
-  const [newQuantity, setNewQuantity] = useState("");
-
-  const [mod, setMod] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const Open = (e) => {
-    messageApi.open({
-      type: "success",
-      content: "Success",
-    });
-    setMod(e);
+  const [editedItem, setEditedItem] = useState({});
+
+  const openEditModal = (item) => {
+    setEditedItem(item);
     setIsModalOpen(true);
-    setNewPrice(e.price);
-    setNewProd(e.productId);
-    setNewQuantity(e.quantity);
   };
 
-  const handleOk = async (e) => {
+  const handleEditOk = async () => {
     let val = localStorage.getItem("userAuth");
     val = JSON.parse(val);
-    const data = await axios.put(
-      `http://localhost:8000/api/cart-item/cart/${val.user.id}`,
-      { productId: newProd, quantity: parseInt(newQuantity) }
-    );
-    if (data.data.success) {
-      setCart2(data.data.cart);
-      setCart(data.data.cart.items);
-    } else {
-      console.log("Failed in fetching!");
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/cart-item/cart/${val.user.id}`,
+        {
+          productId: editedItem.productId,
+          quantity: editedItem.quantity
+        }
+      );
+      if (response.data.success) {
+        setCart2(response.data.cart);
+        setCart(response.data.cart.items);
+      } else {
+        console.log("Failed in updating!");
+      }
+    } catch (error) {
+      console.log(error);
     }
     setIsModalOpen(false);
   };
-  const handleCancel = () => {
+
+  const handleEditCancel = () => {
     setIsModalOpen(false);
   };
+
   return (
     <Middle cart={cart}>
       {contextHolder}
-      <div class="container-fluid">
-        <div class="row" style={{ height: "500px" }}>
+      <div className="container-fluid">
+        <div className="row" style={{ height: "500px" }}>
           <div
-            class="col-7"
+            className="col-7"
             style={{ boxShadow: "1px 1px 10px 1px lightgray" }}
           >
             <div
-              class="col-12"
+              className="col-12"
               style={{ height: "350px", overflow: "scroll", marginTop: "20px" }}
-              className="scrollBar"
+              class="scrollBar"
             >
-              {cart.map((i, index) => {
-                return (
-                  <>
-                    <Row gutter={16}>
-                      <Col span={8}>
-                        <Card
-                          hoverable
-                          style={{
-                            width: 250,
-                            height: 300,
-                          }}
-                          cover={
+              {cart.map((item, index) => (
+                <Row gutter={16} key={index}>
+                  <Col span={8}>
+                    <Card
+                      hoverable
+                      style={{
+                        width: 250,
+                        height: 300,
+                      }}
+                      cover={
+                        <Carousel autoplay>
+                          {item.image ? (
+                            item.image.map((imageUrl, index) => (
+                              <div key={index}>
+                                <img
+                                  src={imageUrl}
+                                  style={{
+                                    width: "100%",
+                                    height:"100%"
+                                  }}
+                                />
+                              </div>
+                            ))
+                          ) : (
+                            <div>No images available.</div>
+                          )}
+                        </Carousel>
+                      }
+                    ></Card>
+                  </Col>
+                  <Col span={8} style={{ flexDirection: "column" }}>
+                    <Card
+                      title={item.name}
+                      bordered={false}
+                      style={{ fontSize: "25px" }}
+                    >
+                      &#8377;{item.price}
+                    </Card>
+
+                    <div>
+                      <Popover
+                        content={
+                          <button
+                            onClick={() => {
+                              handleDelete(item.productId);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Ok
+                          </button>
+                        }
+                        title="Confirm"
+                        trigger="click"
+                        open={open}
+                        onOpenChange={handleOpenChange}
+                      >
+                        <Button
+                          type="primary"
+                          danger
+                          style={{ float: "right" }}
+                        >
+                          <i className="fa-sharp fa-solid fa-trash"></i>
+                        </Button>
+                      </Popover>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          fontSize: "20px",
+                        }}
+                      >
+                        <span style={{ float: "right", fontSize: "15px" }}>
+                          <Button
+                            className="primary"
+                            type="primary"
+                            value="Input"
+                            onClick={() => openEditModal(item)}
+                          >
+                            Edit Details
+                          </Button>
+                          <Modal
+                            style={{
+                              alignItems: "center",
+                              width: "100px",
+                            }}
+                            title="Basic Modal"
+                            open={isModalOpen}
+                            onOk={handleEditOk}
+                            onCancel={handleEditCancel}
+                          >
                             <img
                               alt="example"
-                              src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png"
+                              src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
+                              width={200}
+                              height={200}
                             />
-                          }
-                        ></Card>
-                      </Col>
-                      <Col span={8} style={{ flexDirection: "column" }}>
-                        <Card
-                          title={i.name}
-                          bordered={false}
-                          style={{ fontSize: "25px" }}
-                        >
-                          &#8377;{i.price}
-                        </Card>
-
-                        <div>
-                          <Popover
-                            content={
-                              <button
-                                onClick={() => {
-                                  handleDelete(i);
-                                }}
-                                style={{ cursor: "pointer" }}
-                              >
-                                Ok
-                              </button>
-                            }
-                            title="Confirm"
-                            trigger="click"
-                            open={open}
-                            onOpenChange={handleOpenChange}
-                          >
-                            <Button
-                              type="primary"
-                              danger
-                              style={{ float: "right" }}
-                            >
-                              <i class="fa-sharp fa-solid fa-trash"></i>
-                            </Button>
-                          </Popover>
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "5px",
-                              fontSize: "20px",
-                            }}
-                          >
-                            <span style={{ float: "right", fontSize: "15px" }}>
-                              <Button
-                                class="primary"
-                                type="primary"
-                                value="Input"
-                                onClick={() => Open(i)}
-                              >
-                                Edit Details
-                              </Button>
-                              <Modal
+                            <h1 style={{ textAlign: "left" }}>
+                              Title: {editedItem.name} <br />
+                              <span
                                 style={{
-                                  alignItems: "center",
-                                  width: "100px",
+                                  fontSize: "20px",
+                                  fontWeight: "100",
                                 }}
-                                title="Basic Modal"
-                                open={isModalOpen}
-                                onOk={() => {
-                                  handleOk();
-                                }}
-                                onCancel={handleCancel}
                               >
-                                <img
-                                  alt="example"
-                                  src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-                                  width={200}
-                                  height={200}
-                                />
-                                <h1 style={{ textAlign: "left" }}>
-                                  Title:{mod.name} <br />
-                                  <span
-                                    style={{
-                                      fontSize: "20px",
-                                      fontWeight: "100",
-                                    }}
-                                  >
-                                    description:{mod.des}
-                                  </span>
-                                </h1>
-                                <h3> &#8377;{mod.price}</h3>
-                                <div style={{ display: "flex", gap: "5px" }}>
-                                  <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    value="Input"
-                                    onClick={handleClick2}
-                                    disabled={counter ? true : false}
-                                  >
-                                    -
-                                  </button>
-                                  <h5>{counter}</h5>
-                                  <button
-                                    class="btn btn-primary"
-                                    type="button"
-                                    value="Input"
-                                    onClick={handleClick1}
-                                    disabled={counter >= 10 ? true : false}
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              </Modal>
-                            </span>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </>
-                );
-              })}
+                                Description: {editedItem.des}
+                              </span>
+                            </h1>
+                            <h3> &#8377;{editedItem.price}</h3>
+                            <div
+                              style={{ display: "flex", gap: "5px" }}
+                            >
+                              <button
+                                className="btn btn-primary"
+                                type="button"
+                                value="Input"
+                                onClick={() => handleClick2(item.productId, item.price)}
+                                disabled={counter[item.productId] <= 0}
+                              >
+                                -
+                              </button>
+                              <h5>{counter[item.productId] || 0}</h5>
+                              <button
+                                className="btn btn-primary"
+                                type="button"
+                                value="Input"
+                                onClick={() => handleClick1(item.productId, item.price)}
+                                disabled={counter[item.productId] >= 10}
+                              >
+                                +
+                              </button>
+                            </div>
+                          </Modal>
+                        </span>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              ))}
             </div>
             <hr style={{ border: "1px solid black" }} />
 
@@ -327,9 +359,9 @@ const Cart = () => {
               </Button>
             </Popover>
           </div>
-          <div class="col-4">
+          <div className="col-4">
             <div
-              class="col-12"
+              className="col-12"
               style={{
                 boxShadow: "1px 1px 10px 1px lightgray",
                 padding: "5px",
@@ -347,7 +379,7 @@ const Cart = () => {
                 }}
               >
                 <span style={{ float: "left" }}>
-                  Price ( {cart?.length} items )
+                  Price ({cart?.length} items)
                 </span>
                 <span style={{ float: "right", fontSize: "20px" }}>
                   &#8377;&nbsp;{cart2.bill}
@@ -398,7 +430,7 @@ const Cart = () => {
               <h5 style={{ color: "gray", margin: "20px" }}>
                 <span style={{ float: "left" }}>Total Amount</span>
                 <span style={{ float: "right" }}>
-                  &#8377; &nbsp;{(Number(cart2.bill) * dis) / 100 || ""}
+                  &#8377;&nbsp;{(Number(cart2.bill) * dis) / 100 || cart2.bill}
                 </span>
               </h5>
             </div>
@@ -409,8 +441,8 @@ const Cart = () => {
                 marginLeft: "20px",
               }}
             >
-              <i class="fa-sharp fa-solid fa-shield"></i> &nbsp;Safe and Secure
-              Payments.Easy returns.100% Authentic products.
+              <i className="fa-sharp fa-solid fa-shield"></i> &nbsp;Safe and
+              Secure Payments. Easy returns. 100% Authentic products.
             </p>
           </div>
         </div>

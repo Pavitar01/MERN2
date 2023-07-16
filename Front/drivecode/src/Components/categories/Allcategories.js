@@ -7,13 +7,14 @@ import Footer from "../Footer";
 import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
 import { useNavigate } from "react-router-dom";
+import ColumnGroup from "antd/es/table/ColumnGroup";
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
   const [auth, setAuth] = useAuth();
   const [value, setValue] = useState("");
   const [details, setDetails] = useState([]);
   const [counter, setCounter] = useState(1);
-  const [mod, setMod] = useState({});
+  const [mod, setMod] = useState([]);
   const [searchString, setSearchString] = useState("");
   const [newProd, setNewProd] = useState("");
   const [newPrice, setNewPrice] = useState("");
@@ -66,19 +67,20 @@ const Allcategories = () => {
     };
     fetchData();
   }, [options, searchString]);
-
+  let val = localStorage.getItem("userAuth");
+  val = JSON.parse(val);
   useEffect(() => {
     const fetchData = async () => {
-      let val = localStorage.getItem("userAuth");
-      val = JSON.parse(val);
-      setValue(val?.user);
-      try {
+   
+  setValue(val?.user.id);
+  try {
         const response = await axios.post(
           "http://localhost:8000/api/product/get-vendor-by-id",
           { id: val?.user?.id }
         );
         if (response.data?.success) {
-          setDetails(response?.data?.user || user);
+          setDetails(response.data.user || user);
+
         }
       } catch (error) {
         console.log(error);
@@ -96,8 +98,9 @@ const Allcategories = () => {
     setNewQuantity(counter);
   };
 
+
   const handleOk = async () => {
-    await axios.post(`http://localhost:8000/api/cart-item/cart/${value.id}`, {
+    await axios.post(`http://localhost:8000/api/cart-item/cart/${value}`, {
       productId: newProd,
       quantity: parseInt(newQuantity),
     });
@@ -192,27 +195,32 @@ const Allcategories = () => {
       >
         {prod?.length !== 0 ? (
           prod.map((product, index) => {
-            if (product?.Addedby !== details?._id && product?.status === 0) {
+            if (product?.Addedby !== value && product?.status === 0) {
               return (
                 <Card
                   key={index}
                   hoverable
                   style={{
-                    width: 240,
-                    height: 400,
+                    width: 300,
+                    height: 500,
                     boxShadow: "1px 1px 10px 1px lightgray",
                     textTransform: "capitalize",
                   }}
                   cover={
-                    <img
-                      alt="example"
-                      src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-                    />
+                    <Carousel autoplay>
+                      {product.image.map((i, index) => {
+                        return (
+                          <div key={index}>
+                            <img src={i} style={{ width: "300px" }} />
+                          </div>
+                        );
+                      })}
+                    </Carousel>
                   }
                 >
                   <Meta title={product.name} />
                   <h1 style={{ textAlign: "left", fontSize: "15px" }}>
-                    &#8377;{product.price}
+                    &#8377;{product.price}&nbsp;
                     <del style={{ fontSize: "15px", color: "gray" }}>
                       {product.price * 2}
                     </del>
@@ -265,10 +273,20 @@ const Allcategories = () => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <img
-            alt="example"
-            src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-          />
+          <Carousel autoplay>
+            {mod.image && mod.image.length > 0 ? (
+              mod.image.map((imageUrl, index) => (
+                <div key={index}>
+                  <img
+                    src={imageUrl}
+                    style={{ width: "300px", marginLeft: "90px" }}
+                  />
+                </div>
+              ))
+            ) : (
+              <div>No images available.</div>
+            )}
+          </Carousel>
           <h1 style={{ textAlign: "left", textTransform: "capitalize" }}>
             {mod.name} <br />
             <span style={{ fontSize: "20px", fontWeight: "100" }}>
@@ -276,27 +294,6 @@ const Allcategories = () => {
             </span>
           </h1>
           <h3> &#8377;{mod.price} </h3>
-          <div style={{ display: "flex", gap: "5px" }}>
-            <button
-              className="btn btn-primary"
-              type="button"
-              value="Input"
-              onClick={handleClick2}
-              disabled={counter <= 1 ? true : false}
-            >
-              -
-            </button>
-            <h5>{counter}</h5>
-            <button
-              className="btn btn-primary"
-              type="button"
-              value="Input"
-              onClick={handleClick1}
-              disabled={counter >= 10 ? true : false}
-            >
-              +
-            </button>
-          </div>
         </Modal>
       </div>
       <h1
