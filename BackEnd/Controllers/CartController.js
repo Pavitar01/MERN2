@@ -35,6 +35,7 @@ try {
     const price = item.price;
     const name = item.name;
 
+
     if (cart) {
       // if cart exists for the user
       let itemIndex = cart.items.findIndex((p) => p.productId == productId);
@@ -75,19 +76,21 @@ const add_cart_item = async (req, res) => {
       res.status(404).send("Item not found!");
     }
 
-
-    const user=await User.findOne({_id:userId})
+    const user = await User.findOne({ _id: userId });
 
     const price = item.price;
     const name = item.name;
-    const sellerId=item.Addedby;
+    const sellerId = item.Addedby;
     const userDetails = {
       name: user.name,
       address: user.address,
       email: user.email,
-      phone:user.phone
+      phone: user.phone
     };
 
+    // Update the order of the product based on quantity
+    item.orders += quantity;
+    await item.save();
 
     if (cart) {
       // if cart exists for the user
@@ -99,7 +102,7 @@ const add_cart_item = async (req, res) => {
         productItem.quantity += quantity;
         cart.items[itemIndex] = productItem;
       } else {
-        cart.items.push({ productId, name, quantity, price,sellerId,userDetails });
+        cart.items.push({ productId, name, quantity, price, sellerId, userDetails });
       }
       cart.bill += quantity * price;
       cart = await cart.save();
@@ -108,7 +111,7 @@ const add_cart_item = async (req, res) => {
       // no cart exists, create one
       const newCart = await Cart.create({
         userId,
-        items: [{ productId, name, quantity, price,sellerId,userDetails }],
+        items: [{ productId, name, quantity, price, sellerId, userDetails }],
         bill: quantity * price,
       });
       return res.status(201).send(newCart);
@@ -118,6 +121,7 @@ const add_cart_item = async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 };
+
 
 const delete_item = async (req, res) => {
   const userId = req.params.userId;

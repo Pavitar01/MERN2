@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Modal, Carousel,Input } from "antd";
+import { Button, Card, Modal, Carousel, Input } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useAuth } from "../../Auth/Index";
 import Footer from "../Footer";
-import SideMenu from "../../Pages/SideMenu" ;
+import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
+import { useNavigate } from "react-router-dom";
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
   const [auth, setAuth] = useAuth();
@@ -19,7 +20,7 @@ const Allcategories = () => {
   const [newQuantity, setNewQuantity] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const navigate = useNavigate();
   const [options, setOptions] = useState("");
 
   // Function is called every time the increment button is clicked
@@ -37,7 +38,7 @@ const Allcategories = () => {
   const user = {
     _id: 12345678,
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -65,8 +66,6 @@ const Allcategories = () => {
     };
     fetchData();
   }, [options, searchString]);
-  
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,6 +101,7 @@ const Allcategories = () => {
       productId: newProd,
       quantity: parseInt(newQuantity),
     });
+    navigate("/");
     setIsModalOpen(false);
   };
 
@@ -119,12 +119,13 @@ const Allcategories = () => {
 
   return (
     <>
-     
-      <Middle handleSearchString={handleSearchString} searchString={searchString}>
+      <Middle
+        handleSearchString={handleSearchString}
+        searchString={searchString}
+      >
         <div className="container-fluid" style={{ display: "flex" }}>
           <SideMenu setOption={setOptions} />
           <div className="col-8">
-       
             <Carousel autoplay>
               <div>
                 <img
@@ -166,7 +167,15 @@ const Allcategories = () => {
           textTransform: "uppercase",
         }}
       >
-        BEST OF {options} CATEGORY <span style={{width:"300px"}}><input type="text" value={searchString} onChange={handleSearchString} style={{fontSize:"20px"}}/></span>
+        BEST OF {options} CATEGORY{" "}
+        <span style={{ width: "300px" }}>
+          <input
+            type="text"
+            value={searchString}
+            onChange={handleSearchString}
+            style={{ fontSize: "20px" }}
+          />
+        </span>
       </h1>
       <div
         className="col-12 scrollBar"
@@ -192,6 +201,7 @@ const Allcategories = () => {
                     width: 240,
                     height: 400,
                     boxShadow: "1px 1px 10px 1px lightgray",
+                    textTransform: "capitalize",
                   }}
                   cover={
                     <img
@@ -250,7 +260,7 @@ const Allcategories = () => {
           </div>
         )}
         <Modal
-          title="Basic Modal"
+          title={`Product Id: ${mod._id}`}
           visible={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -259,8 +269,8 @@ const Allcategories = () => {
             alt="example"
             src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
           />
-          <h1 style={{ textAlign: "left" }}>
-            Title: {mod.name} <br />
+          <h1 style={{ textAlign: "left", textTransform: "capitalize" }}>
+            {mod.name} <br />
             <span style={{ fontSize: "20px", fontWeight: "100" }}>
               Description: {mod.des}
             </span>

@@ -24,6 +24,11 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 1,
       },
+
+      orders: {
+        type: Number,
+        default: 0,
+      },
       quantity: {
         type: Number,
         required: true,

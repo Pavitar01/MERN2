@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./Track.css"
 const TrackComponent = () => {
   const [heading, setHeading] = useState("");
 
@@ -28,8 +29,24 @@ const TrackComponent = () => {
   return (
     <>
       <h1>{heading}</h1>
-
-     
+      <p style={{fontSize:"20px"}}>Dear customer ,<br/> Your Order is Arriving Soon !</p>
+      <div class="wrap" style={{borderBottom:"10px solid black"}}>
+        <img
+          class="image truck-img"
+          src="https://learndesigntutorial.com/wp-content/uploads/2021/03/truck.png"
+          alt=""
+        />
+        <img
+          class="image box-img"
+          src="https://learndesigntutorial.com/wp-content/uploads/2021/03/box.png"
+          alt=""
+        />
+        <img
+          class="image box-img box-img2"
+          src="https://learndesigntutorial.com/wp-content/uploads/2021/03/box.png"
+          alt=""
+        />
+      </div>
     </>
   );
 };

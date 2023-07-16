@@ -185,7 +185,7 @@ const Home1 = () => {
             </div>
           )}
           <Modal
-            title="Basic Modal"
+            title={`Product Id: ${mod._id}`}
             visible={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}

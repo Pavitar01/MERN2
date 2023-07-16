@@ -12,7 +12,6 @@ const createOrder = async (req, res) => {
     }
 
     const { userId, items, bill } = cart;
-
     
     const newOrder = new Order({
       userId,

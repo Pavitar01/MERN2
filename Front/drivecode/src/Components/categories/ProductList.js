@@ -64,11 +64,11 @@ const ProductList = () => {
           >
             <Meta title={product.title} />
             <Meta title={product.category} style={{ color: "gray" }} />
-            <p>
+            <p style={{textAlign:"left"}}>
               Price: &#8377;{product.price}{" "}
               <del style={{ color: "gray" }}>{product.price * 1.5}</del>
             </p>
-            <p>Rating: {product.rating.rate}</p>
+            <p style={{textAlign:"left"}}>Rating: {product.rating.rate}</p>
           </Card>
         ))}
       </div>

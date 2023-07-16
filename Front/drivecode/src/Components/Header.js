@@ -6,9 +6,10 @@ import axios from "axios";
 import { Tag,Input } from "antd";
 const { Search } = Input;
 
-const Header = ({ cart, prod, handleSearchString, searchString }) => {
+const Header = ({prod, handleSearchString, searchString }) => {
   const [auth, setAuth] = useAuth();
-  const [cat, setCat] = useState([]);
+  const [cat, setCat] = useState([]);     
+  const [cart, setCart] = useState([]);     
 
   const navigate = useNavigate();
 
@@ -22,6 +23,25 @@ const Header = ({ cart, prod, handleSearchString, searchString }) => {
     localStorage.removeItem("userAuth");
     toast.success("Logout Successfully !");
   };
+
+
+  useEffect(() => {
+    const a = async () => {
+      let val = localStorage.getItem("userAuth");
+      val = JSON.parse(val);
+      const data = await axios.get(
+        `http://localhost:8000/api/cart-item/cart/${val.user.id}`
+      );
+      if (data.data.success) {
+        setCart(data.data.cart.items);
+      } else {
+        console.log("Failed in fetching!");
+      }
+    };
+
+    a();
+  }, []);
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -85,6 +105,15 @@ const Header = ({ cart, prod, handleSearchString, searchString }) => {
                     to="/policy"
                   >
                     Policy
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    className="nav-link"
+                    aria-current="page"
+                    to="/best-seller"
+                  >
+                    Best Sellers
                   </NavLink>
                 </li>
               </>
