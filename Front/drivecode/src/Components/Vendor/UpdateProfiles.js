@@ -23,6 +23,7 @@ const UpdateProfiles = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
+  const [val,setVal]=useState(0)
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -47,7 +48,7 @@ const UpdateProfiles = () => {
       setData(data.data);
     };
     fetchData();
-  }, []);
+  }, [val]);
 
   const [formData, setFormData] = useState({
     name: all.name,
@@ -71,6 +72,7 @@ const UpdateProfiles = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleSubmit = async (e) => {
+    setVal(val+1)
     e.preventDefault();
 
     if (!formData.name || !formData.address) {

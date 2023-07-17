@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import Middle from "../Middle";
 import AdminPannel from "./AdminPannel";
 import axios from "axios";
-import { Select } from "antd";
+import { Select, message } from "antd";
 const { Option } = Select;
 
 const Vendors = () => {
   const [vender, setVendors] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
   useEffect(() => {
     const a = async () => {
       try {
@@ -17,7 +18,7 @@ const Vendors = () => {
       } catch (error) {}
     };
     a();
-  }, []);
+  }, [vender]);
   const handleChange = async (event) => {
     try {
       const data = await axios.put(
@@ -28,9 +29,15 @@ const Vendors = () => {
         }
       );
       if (data.data.success) {
-        alert(data.data.message);
+        messageApi.open({
+          type: "success",
+          content: data.data.message,
+        });
       } else {
-        alert("error");
+        messageApi.open({
+          type: "error",
+          content: data.data.message,
+        });
       }
     } catch (err) {
       console.log("Error:", err);
@@ -39,6 +46,7 @@ const Vendors = () => {
 
   return (
     <Middle>
+      {contextHolder}
       <div className="container">
         <div className="row  mt-5">
           <AdminPannel />
@@ -64,22 +72,14 @@ const Vendors = () => {
                         <select
                           className="form-control"
                           id="exampleFormControlSelect1"
+                          defaultValue={i.flag}
                           value={Option.value}
                           onChange={(e) => {
                             handleChange({ event: e.target.value, id: i._id });
                           }}
                         >
-                          {i.flag === 1 ? (
-                            <>
-                              <option value={1}>Active</option>
-                              <option value={0}>Disabled</option>
-                            </>
-                          ) : (
-                            <>
-                              <option value={0}>Disabled</option>
-                              <option value={1}>Active</option>
-                            </>
-                          )}
+                          <option value={1}>Active</option>
+                          <option value={0}>Disabled</option>
                         </select>
                       </td>
                     </tr>

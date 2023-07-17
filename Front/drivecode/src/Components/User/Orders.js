@@ -113,7 +113,7 @@ const Orders = () => {
                         <Button
                           type="primary"
                           danger
-                          disabled={isCancelButtonDisabled}
+                          disabled={isCancelButtonDisabled || item.status===0 || item.status===2}
                           
                           onClick={() => handleCancel(orderIndex, itemIndex)}
                         >

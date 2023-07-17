@@ -14,9 +14,13 @@ const { createOrder } = require("./Controllers/OrderController");
 const OrderRouter = require("./Routes/OrderRoutes");
 app.use(cors());
 app.use(bodyParser.json());
-
-app.use(bodyParser.json({ limit: '500mb' }));
-app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
 //mongo DB
 
 const db = mongoose
@@ -28,22 +32,19 @@ const db = mongoose
     console.log(err);
   });
 
-
-
-app.use('/api/auth',router);
+app.use("/api/auth", router);
 //category
-app.use('/api/category',categoryRouter);
+app.use("/api/category", categoryRouter);
 //product
-app.use('/api/product',productRouter);
+app.use("/api/product", productRouter);
 
-app.use("/api/cart-item",CartRouter)
+app.use("/api/cart-item", CartRouter);
 // app.use("/api/order-item/",OrderRouter)
-app.use("/api/order",OrderRouter)
+app.use("/api/order", OrderRouter);
 
 //middlewre
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 
 //port from .env
 const port = process.env.PORT || 8000;

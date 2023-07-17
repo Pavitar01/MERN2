@@ -199,26 +199,11 @@ const UpdateProfiles = () => {
               >
                 setPass
               </Button>
-              <Modal
-                title="Basic Modal"
-                visible={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-              >
-                <input
-                  type="text"
-                  name="password"
-                  placeholder="At least 6 characters"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                />
-              </Modal>
-
+              
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer" }}
+                style={{ marginBottom: "20px", cursor: "pointer",marginTop:"10px",height:"50px" }}
               />
             </form>
           </div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Button, Modal, Radio,message } from "antd";
+import { Button, Modal, Radio, message } from "antd";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase/config";
 
@@ -39,8 +39,8 @@ const Register = () => {
 
       if (response.data.success) {
         messageApi.open({
-          type: 'success',
-          content: "Account is created "
+          type: "success",
+          content: "Account is created ",
         });
         navigate("/signin");
         // Reset form fields
@@ -53,17 +53,17 @@ const Register = () => {
           userType: 0,
           ans: "",
         });
-   
       } else {
         messageApi.open({
-          type: 'error',
+          type: "error",
           content: response.data.message,
         });
       }
     } catch (error) {
       messageApi.open({
-        type: 'error',
-        content: "Error during registration:", error,
+        type: "error",
+        content: "Error during registration:",
+        error,
       });
     }
     setIsModalOpen(false);
@@ -113,11 +113,17 @@ const Register = () => {
       !formData.ans
     ) {
       messageApi.open({
-        type: 'error',
-        content: "Error during registration:", error,
+        type: "error",
+        content: "Error during registration:",
+        error,
       });
 
       return;
+    } else if (formData.phoneNumber.length != 10) {
+      messageApi.open({
+        type: "error",
+        content: "Phone number should be of 10 digit",
+      });
     }
 
     try {
@@ -136,8 +142,8 @@ const Register = () => {
       );
       if (response.data.success) {
         messageApi.open({
-          type: 'success',
-          content: "Account is created !"
+          type: "success",
+          content: "Account is created !",
         });
         navigate("/signin");
         // Reset form fields
@@ -151,27 +157,26 @@ const Register = () => {
           ans: "",
         });
         messageApi.open({
-          type: 'error',
-          content: response.data.message
+          type: "error",
+          content: response.data.message,
         });
       } else {
         messageApi.open({
-          type: 'error',
-          content: response.data.message
+          type: "error",
+          content: response.data.message,
         });
       }
     } catch (error) {
       messageApi.open({
-        type: 'error',
-        content: "Some Error Occured!"
+        type: "error",
+        content: "Some Error Occured!",
       });
     }
-
   };
 
   return (
     <div className="register">
-    {contextHolder}
+      {contextHolder}
       <div className="signup-box">
         <h1 style={{ fontSize: "30px", textAlign: "left", marginLeft: "16px" }}>
           Create Account
@@ -198,9 +203,10 @@ const Register = () => {
           />
 
           <label>Phone Number</label>
-    
+
           <input
-            type="tel"
+            type="number"
+            maxLength={10}
             name="phoneNumber"
             placeholder="Please fill 10 digit number"
             required
@@ -273,7 +279,7 @@ const Register = () => {
           <input
             type="submit"
             value="Submit"
-            style={{ marginBottom: "20px",height:"50px",padding:"10px" }}
+            style={{ marginBottom: "20px", height: "50px", padding: "10px" }}
           />
         </form>
         <p style={{ width: "100%", textAlign: "center" }}>

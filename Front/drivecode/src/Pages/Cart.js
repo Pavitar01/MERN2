@@ -19,39 +19,54 @@ const Cart = () => {
   const [cart, setCart] = useState([]);
   const [cart2, setCart2] = useState([]);
   const [dis, setDis] = useState(0);
-  const [counter, setCounter] = useState({});
+  const [counter, setCounter] = useState(1);
+  const [val, setVal] = useState(0);
   const [messageApi, contextHolder] = message.useMessage();
   const handleChange = (value) => {
     setDis(value);
   };
   const navigate = useNavigate();
-  const handleClick1 = (productId, price) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-    setCounter((prevCounter) => ({
-      ...prevCounter,
-      [productId]: (prevCounter[productId] || 0) + 1
-    }));
-  };
 
-  const handleClick2 = (productId, price) => {
-    setCart((prevCart) =>
-      prevCart.map((item) => {
-        if (item.productId === productId && item.quantity > 0) {
-          return { ...item, quantity: item.quantity - 1 };
+  const handleClick2 = async () => {
+    let val = localStorage.getItem("userAuth");
+    val = JSON.parse(val);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/cart-item/cart/${val.user.id}`,
+        {
+          productId: editedItem.productId,
+          quantity: counter - 1,
         }
-        return item;
-      })
-    );
-    setCounter((prevCounter) => ({
-      ...prevCounter,
-      [productId]: (prevCounter[productId] || 0) - 1
-    }));
+      );
+      if (response.data.success) {
+        setCart2(response.data.cart);
+        setCart(response.data.cart.items);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleClick1 = async () => {
+    let val = localStorage.getItem("userAuth");
+    val = JSON.parse(val);
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/cart-item/cart/${val.user.id}`,
+        {
+          productId: editedItem.productId,
+          quantity: counter + 1,
+        }
+      );
+      console.log(response.data);
+      if (response.data.success) {
+        setCart2(response.data.cart);
+        setCart(response.data.cart.items);
+      } else {
+        console.log("Failed in updating!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleDelete = async (productId) => {
@@ -91,7 +106,7 @@ const Cart = () => {
     };
 
     fetchData();
-  }, []);
+  }, [val]);
 
   const [open, setOpen] = useState(false);
   const hide = () => {
@@ -100,7 +115,6 @@ const Cart = () => {
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
-  console.log(cart);
 
   const placeOrder = async () => {
     let val = localStorage.getItem("userAuth");
@@ -134,6 +148,7 @@ const Cart = () => {
             type: "success",
             content: "Order has been placed successfully! Check your Orders",
           });
+          navigate("/vendor-dashboard/all-order")
         }
       } catch (error) {
         console.log(error);
@@ -143,31 +158,16 @@ const Cart = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedItem, setEditedItem] = useState({});
 
+  // setVal(editedItem.quantity)
+
   const openEditModal = (item) => {
     setEditedItem(item);
+    setCounter(item.quantity);
     setIsModalOpen(true);
   };
 
   const handleEditOk = async () => {
-    let val = localStorage.getItem("userAuth");
-    val = JSON.parse(val);
-    try {
-      const response = await axios.put(
-        `http://localhost:8000/api/cart-item/cart/${val.user.id}`,
-        {
-          productId: editedItem.productId,
-          quantity: editedItem.quantity
-        }
-      );
-      if (response.data.success) {
-        setCart2(response.data.cart);
-        setCart(response.data.cart.items);
-      } else {
-        console.log("Failed in updating!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    setVal(val + 1);
     setIsModalOpen(false);
   };
 
@@ -207,7 +207,7 @@ const Cart = () => {
                                   src={imageUrl}
                                   style={{
                                     width: "100%",
-                                    height:"100%"
+                                    height: "100%",
                                   }}
                                 />
                               </div>
@@ -231,14 +231,15 @@ const Cart = () => {
                     <div>
                       <Popover
                         content={
-                          <button
+                          <Button
+                          type="primary"
                             onClick={() => {
                               handleDelete(item.productId);
                             }}
                             style={{ cursor: "pointer" }}
                           >
                             Ok
-                          </button>
+                          </Button>
                         }
                         title="Confirm"
                         trigger="click"
@@ -274,17 +275,20 @@ const Cart = () => {
                               alignItems: "center",
                               width: "100px",
                             }}
-                            title="Basic Modal"
+                            title={editedItem._id}
                             open={isModalOpen}
                             onOk={handleEditOk}
                             onCancel={handleEditCancel}
                           >
-                            <img
-                              alt="example"
-                              src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-                              width={200}
-                              height={200}
-                            />
+                            <Carousel autoplay>
+                              {item.image.map((i, index) => {
+                                return (
+                                  <div key={index}>
+                                    <img src={i} style={{ width: "300px",marginLeft:"80px" }} />
+                                  </div>
+                                );
+                              })}
+                            </Carousel>
                             <h1 style={{ textAlign: "left" }}>
                               Title: {editedItem.name} <br />
                               <span
@@ -297,25 +301,30 @@ const Cart = () => {
                               </span>
                             </h1>
                             <h3> &#8377;{editedItem.price}</h3>
-                            <div
-                              style={{ display: "flex", gap: "5px" }}
-                            >
+                            <div style={{ display: "flex", gap: "5px" }}>
                               <button
                                 className="btn btn-primary"
                                 type="button"
                                 value="Input"
-                                onClick={() => handleClick2(item.productId, item.price)}
-                                disabled={counter[item.productId] <= 0}
+                                onClick={() => {
+                                  setCounter(counter - 1);
+                                  handleClick2();
+                                }}
+                                disabled={counter <= 1}
                               >
                                 -
                               </button>
-                              <h5>{counter[item.productId] || 0}</h5>
+
+                              <h5>{counter}</h5>
                               <button
                                 className="btn btn-primary"
                                 type="button"
                                 value="Input"
-                                onClick={() => handleClick1(item.productId, item.price)}
-                                disabled={counter[item.productId] >= 10}
+                                onClick={() => {
+                                  setCounter(counter + 1);
+                                  handleClick1();
+                                }}
+                                disabled={counter >= 10}
                               >
                                 +
                               </button>
@@ -333,15 +342,16 @@ const Cart = () => {
             <Popover
               content={
                 <>
-                  <button onClick={placeOrder} style={{ cursor: "pointer" }}>
+                  <Button onClick={placeOrder} style={{ cursor: "pointer",borderRadius:"0",margin:"1px" }} type="primary">
                     Buy
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                  type="primary"
                     onClick={() => navigate("/user/profile")}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer",borderRadius:"0" ,margin:"1px" }}
                   >
                     Change Address
-                  </button>
+                  </Button>
                 </>
               }
               title="Confirm"

@@ -57,7 +57,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [auth]);
 
   return (
     <nav className="navbar navbar-expand-lg bg-light">
@@ -81,12 +81,12 @@ const Header = ({prod, handleSearchString, searchString }) => {
             className="form-inline mt-2 my-lg-0  ms-auto"
             style={{ display: "flex", width: "100%" }}
           >
-            <Search
+            {/* <Search
               placeholder="Search in ShopCart.in by category....."
               value={searchString}
               onChange={handleSearchString}
               style={{ width: "100%", margin: "20px" }}
-            />
+            /> */}
           </form>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             {auth?.user?.role === 2 ? (

@@ -43,12 +43,12 @@ try {
       // Check if product exists or not
       if (itemIndex > -1) {
         let productItem = cart.items[itemIndex];
-        productItem.quantity += quantity;
+        productItem.quantity = quantity;
         cart.items[itemIndex] = productItem;
       } else {
         cart.items.push({ productId, name, quantity, price,image });
       }
-      cart.bill += quantity * price;
+      cart.bill = quantity * price;
       cart = await cart.save();
       return res.status(201).send(cart);
     } else {
@@ -100,7 +100,7 @@ const add_cart_item = async (req, res) => {
       // Check if product exists or not
       if (itemIndex > -1) {
         let productItem = cart.items[itemIndex];
-        productItem.quantity += quantity;
+        productItem.quantity = quantity;
         cart.items[itemIndex] = productItem;
       } else {
         cart.items.push({ productId, name, quantity, price, sellerId, userDetails, image });

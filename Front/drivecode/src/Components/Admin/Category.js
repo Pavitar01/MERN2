@@ -3,25 +3,33 @@ import Middle from "../Middle";
 import AdminPannel from "./AdminPannel";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Button, message, Space } from "antd";
 const Category = () => {
   const [cat, setCat] = useState([]);
   const [name, setName] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
   const deleteCategory = async (id) => {
     try {
       const data = await axios.post(
         "http://localhost:8000/api/category/delete-category",
         { id }
       );
-      console.log(data.data)
       if (data.data.success) {
-        toast.success("Category Deleted Successfully !");
+        messageApi.open({
+          type: "success",
+          content: "Category Deleted Successfully !",
+        });
       }
     } catch (err) {
-      console.log(err);
-      toast.error("Error in Deleting cateogory !");
+      messageApi.open({
+        type: "error",
+        content: "Error in Deleting cateogory !",
+      });
     }
   };
   const handleSubmit = async (e) => {
+    setName("");
+
     e.preventDefault();
     if (name !== "") {
       try {
@@ -29,15 +37,29 @@ const Category = () => {
           "http://localhost:8000/api/category/create-category",
           { name }
         );
+
         if (data.data.success) {
-          toast.success("Category Added Successfully !");
+          messageApi.open({
+            type: "success",
+            content: "Category Added Successfully !",
+          });
+        } else {
+          messageApi.open({
+            type: "error",
+            content: data.data.message,
+          });
         }
       } catch (err) {
-        console.log(err);
-        toast.error("Error in creating cateogory !");
+        messageApi.open({
+          type: "error",
+          content: "Error in creating cateogory !",
+        });
       }
     } else {
-      alert("Please Write in input feild");
+      messageApi.open({
+        type: "warning",
+        content: "Please fill in feild !",
+      });
     }
   };
   useEffect(() => {
@@ -54,9 +76,10 @@ const Category = () => {
       }
     };
     a();
-  }, []);
+  }, [cat]);
   return (
     <Middle>
+      {contextHolder}
       <div className="container">
         <div className="row  mt-5">
           <AdminPannel />
@@ -68,6 +91,7 @@ const Category = () => {
             >
               <div class="form-group" style={{ width: "90%" }}>
                 <input
+                value={name}
                   onChange={(e) => setName(e.target.value)}
                   type="text"
                   class="form-control"
@@ -106,7 +130,6 @@ const Category = () => {
                             deleteCategory(i._id);
                           }}
                         ></i>
-                       
                       </td>
                     </tr>
                   );

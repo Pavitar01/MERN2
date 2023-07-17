@@ -39,13 +39,10 @@ const BestSeller = () => {
         );
         if (response?.data?.success) {
           const products = response.data.products;
-          console.log(products);
-
           const filteredProd = products.filter(
             (product) => product.orders >= 5
           );
           setProd(filteredProd);
-          console.log(prod);
         }
       } catch (error) {
         console.log(error);

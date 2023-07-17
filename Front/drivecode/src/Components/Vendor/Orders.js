@@ -172,7 +172,7 @@ const AllOrder = () => {
                       </td>
                       <td>
                         <Button type="primary" onClick={showModal}>
-                          User Details
+                          Open Modal
                         </Button>
                         <Modal
                           title="User Details"
@@ -180,14 +180,40 @@ const AllOrder = () => {
                           onOk={handleOk}
                           onCancel={handleCancel}
                         >
-                          {
-                            <div>
-                              <p> Name: {item.userDetails.name}</p>
-                              <p> Email: {item.userDetails.nemailame}</p>
-                              <p> Phone: {item.userDetails.phone}</p>
-                              <p> Address: {item.userDetails.address}</p>
-                            </div>
-                          }
+                          <div>
+                            <p style={{ width: "100%" }}>
+                              <span
+                                style={{ float: "left", fontWeight: "600" }}
+                              >
+                                Name:
+                              </span>
+                              {item.userDetails.name}
+                            </p>
+                            <p style={{ width: "100%" }}>
+                              <span
+                                style={{ float: "left", fontWeight: "600" }}
+                              >
+                                Email:
+                              </span>
+                              {item.userDetails.email}
+                            </p>
+                            <p style={{ width: "100%" }}>
+                              <span
+                                style={{ float: "left", fontWeight: "600" }}
+                              >
+                                Phone:
+                              </span>
+                              {item.userDetails.phone}
+                            </p>
+                            <p style={{ width: "100%" }}>
+                              <span
+                                style={{ float: "left", fontWeight: "600" }}
+                              >
+                                Address:
+                              </span>
+                              {item.userDetails.address}
+                            </p>
+                          </div>
                         </Modal>
                       </td>
                     </tr>

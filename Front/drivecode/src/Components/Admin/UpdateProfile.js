@@ -22,31 +22,28 @@ const UpdateProfile = () => {
   const [data1, setData] = useState("");
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [val, setVal] = useState(0);
   const showModal = () => {
     setIsModalOpen(true);
   };
-  
+
   const handleOk = () => {
     setIsModalOpen(false);
   };
-  
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.post(
-        "http://localhost:8000/api/auth/all-user",
-        {
-          email: auth?.user?.email,
-        }
-      );
+      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
+        email: auth?.user?.email,
+      });
       setData(data.data);
     };
     fetchData();
-  }, []);
+  }, [val]);
 
   const [formData, setFormData] = useState({
     name: data1.name,
@@ -72,6 +69,8 @@ const UpdateProfile = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleSubmit = async (e) => {
+    setVal(val + 1);
+
     e.preventDefault();
 
     if (!formData.name || !formData.address) {
@@ -96,9 +95,9 @@ const UpdateProfile = () => {
         "http://localhost:8000/api/auth/update-profile",
         {
           curreemail: auth?.user?.email,
-          email: formData.email,
+          email: auth.user.email,
           name: formData.name,
-          phone: formData.phoneNumber,
+          phone: auth.user.phone,
           address: formData.address,
           photo: photoBase64,
         }
@@ -202,26 +201,12 @@ const UpdateProfile = () => {
                 setPass
               </Button>
 
-              <Modal
-                title="Basic Modal"
-                visible={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-              >
-                <input
-                  type="text"
-                  name="password"
-                  placeholder="At least 6 characters"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                />
-              </Modal>
+          
 
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer" }}
+                style={{ marginBottom: "20px", cursor: "pointer",height:"50px",marginTop:"10px" }}
               />
             </form>
           </div>

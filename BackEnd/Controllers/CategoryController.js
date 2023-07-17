@@ -103,8 +103,8 @@ const singleCategoryController = async (req, res) => {
 
 const deleteCategoryController = async (req, res) => {
   try {
-    const { id } = req.body.id;
-    const category = await categories.deleteOne({ _id: id });
+   ;
+    const category = await categories.deleteOne({ _id:  req.body.id });
     res.status(200).send({
       message: "Category deleted successfully !",
       success: true,

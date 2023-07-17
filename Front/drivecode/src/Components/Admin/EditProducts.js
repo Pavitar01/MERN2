@@ -4,6 +4,7 @@ import Middle from "../Middle";
 
 import axios from "axios";
 import Card from "./Card";
+
 const EditProducts = () => {
   const [prod, setProd] = useState([]);
   useEffect(() => {
@@ -13,7 +14,6 @@ const EditProducts = () => {
           "http://localhost:8000/api/product/get-product"
         );
         if (data?.data?.success) {
-          console.log(data.data.products);
           setProd(data.data.products);
         }
       } catch (error) {
@@ -21,7 +21,7 @@ const EditProducts = () => {
       }
     };
     a();
-  }, []);
+  }, [prod]);
   return (
     <Middle>
       <div className="container">
@@ -30,16 +30,16 @@ const EditProducts = () => {
           <div className="col-8">
             <h1>Publised Product</h1>
             <div
-            className="scrollBar"
+              className="scrollBar"
               style={{
                 width: "100%",
                 height: "580px",
                 display: "flex",
                 gap: "20px",
-                justifyContent:'space-evenly',
-                flexWrap:"wrap",
-                overflow:"scroll",
-                boxShadow:"1px 1px 10px 1px lightgray" 
+                justifyContent: "space-evenly",
+                flexWrap: "wrap",
+                overflow: "scroll",
+                boxShadow: "1px 1px 10px 1px lightgray",
               }}
             >
               {prod.map((i, index) => {

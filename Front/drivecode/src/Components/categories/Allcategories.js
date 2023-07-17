@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Modal, Carousel, Input } from "antd";
+import { Button, Card, Modal, Carousel, Input, Spin, Space } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useAuth } from "../../Auth/Index";
 import Footer from "../Footer";
@@ -67,20 +67,19 @@ const Allcategories = () => {
     };
     fetchData();
   }, [options, searchString]);
+
   let val = localStorage.getItem("userAuth");
   val = JSON.parse(val);
   useEffect(() => {
     const fetchData = async () => {
-   
-  setValue(val?.user.id);
-  try {
+      setValue(val?.user.id);
+      try {
         const response = await axios.post(
           "http://localhost:8000/api/product/get-vendor-by-id",
           { id: val?.user?.id }
         );
         if (response.data?.success) {
           setDetails(response.data.user || user);
-
         }
       } catch (error) {
         console.log(error);
@@ -97,7 +96,6 @@ const Allcategories = () => {
     setNewProd(product._id);
     setNewQuantity(counter);
   };
-
 
   const handleOk = async () => {
     await axios.post(`http://localhost:8000/api/cart-item/cart/${value}`, {
@@ -174,9 +172,10 @@ const Allcategories = () => {
         <span style={{ width: "300px" }}>
           <input
             type="text"
+            placeholder="Search by Product name"
             value={searchString}
             onChange={handleSearchString}
-            style={{ fontSize: "20px" }}
+            style={{ fontSize: "20px", padding: "20px" }}
           />
         </span>
       </h1>
@@ -264,7 +263,11 @@ const Allcategories = () => {
               justifyContent: "center",
             }}
           >
-            No Products Available At This Moment
+            <Space direction="vertical" style={{ width: "100%" }}>
+              <Spin tip="Loading" size="large">
+                <div className="content" />
+              </Spin>
+            </Space>
           </div>
         )}
         <Modal
