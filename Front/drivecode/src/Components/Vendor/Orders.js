@@ -10,6 +10,7 @@ const AllOrder = () => {
 
   const [isCancelButtonDisabled, setIsCancelButtonDisabled] = useState(false);
   const [order, setOrder] = useState([]);
+  const [totalEarnings, setTotalEarnings] = useState(0);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -67,17 +68,17 @@ const AllOrder = () => {
     const fetchedData = async () => {
       let val = localStorage.getItem("userAuth");
       val = JSON.parse(val);
-      // Replace with the authenticated user's ID
       const data = await axios.get(
-        `http://localhost:8000/api/order/orders/get-orders?sellerId=${val.user.id}`
+        `http://localhost:8000/api/order/orders/seller/${val.user.id}`
       );
-      console.log(data.data); // Log the fetched data for debugging purposes
-      messageApi.open({
-        type: "success",
-        content: "All orders fetched Successfully",
-      });
+
       if (data.data.success) {
+        messageApi.open({
+          type: "success",
+          content: "All orders fetched Successfully",
+        });
         setOrder(data.data.orders);
+        setTotalEarnings(data.data.totalEarnings);
       }
     };
     fetchedData();
@@ -236,6 +237,20 @@ const AllOrder = () => {
                   />
            
                 </tr> */}
+              </tbody>
+            </table>
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <h3>Total Earnings: {totalEarnings}</h3>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

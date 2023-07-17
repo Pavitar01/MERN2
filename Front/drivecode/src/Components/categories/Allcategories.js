@@ -7,7 +7,9 @@ import Footer from "../Footer";
 import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
 import { useNavigate } from "react-router-dom";
-import ColumnGroup from "antd/es/table/ColumnGroup";
+import banner from "../../Newfolder/banner.jpg";
+import banner2 from "../../Newfolder/banner2.jpg";
+
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
   const [auth, setAuth] = useAuth();
@@ -19,11 +21,12 @@ const Allcategories = () => {
   const [newProd, setNewProd] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
+  const [cartItems, setCartItems] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const [options, setOptions] = useState("");
-
+const [num,setNum]=useState(0)
   // Function is called every time the increment button is clicked
   const handleClick1 = () => {
     // Counter state is incremented
@@ -66,7 +69,7 @@ const Allcategories = () => {
       }
     };
     fetchData();
-  }, [options, searchString]);
+  }, [options, searchString,num]);
 
   let val = localStorage.getItem("userAuth");
   val = JSON.parse(val);
@@ -88,6 +91,23 @@ const Allcategories = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/cart-item/cart/${value}`
+        );
+        if (response.data.success) {
+          setCartItems(response.data.cart.items);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCartItems();
+  }, [value]);
+
   // Modal
   const showModal = (product) => {
     setMod(product);
@@ -103,6 +123,7 @@ const Allcategories = () => {
       quantity: parseInt(newQuantity),
     });
     navigate("/");
+  setNum(num+1)
     setIsModalOpen(false);
   };
 
@@ -118,6 +139,10 @@ const Allcategories = () => {
     setSearchString(e.target.value);
   };
 
+  const isAddedToCart = (productId) => {
+    return cartItems.some((item) => item.productId === productId);
+  };
+
   return (
     <>
       <Middle
@@ -126,37 +151,40 @@ const Allcategories = () => {
       >
         <div className="container-fluid" style={{ display: "flex" }}>
           <SideMenu setOption={setOptions} />
-          <div className="col-8">
-            <Carousel autoplay>
-              <div>
-                <img
-                  src="https://i.pinimg.com/originals/02/cf/cf/02cfcffac595c832c514d58704cd82ce.jpg"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
-              <div>
-                <img
-                  src="https://th.bing.com/th/id/OIP._M1llvKmA14pBnR2I0PzQgHaE_?pid=ImgDet&rs=1"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
-              <div>
-                <img
-                  src="https://i.pinimg.com/originals/ce/99/0c/ce990c0668729dc4bafeb093ecb964dc.jpg"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
-              <div>
-                <img
-                  src="https://th.bing.com/th/id/R.d1ed34ac8f711d6d807bacb7f217852c?rik=D3hF6b%2bxzryonA&riu=http%3a%2f%2fgraphicgoogle.com%2fwp-content%2fuploads%2f2017%2f10%2fFacebook-Fashion-Big-Sale-Banner.jpg&ehk=xAR7O2yBftDuPOZZ2li0TEjvnMDEw2%2fuJhTgzEniJoc%3d&risl=&pid=ImgRaw&r=0"
-                  width="100%"
-                  height="100%"
-                />
-              </div>
-            </Carousel>
+          <div className="col-10" style={{ display:"flex",gap:"10px" }}>
+            <div style={{ width: "75%", height:"auto", }}>
+              <Carousel autoplay style={{ width: "100%", }}>
+                <div>
+                  <img
+                    src="https://i.pinimg.com/originals/02/cf/cf/02cfcffac595c832c514d58704cd82ce.jpg"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="https://th.bing.com/th/id/OIP._M1llvKmA14pBnR2I0PzQgHaE_?pid=ImgDet&rs=1"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="https://i.pinimg.com/originals/ce/99/0c/ce990c0668729dc4bafeb093ecb964dc.jpg"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="https://th.bing.com/th/id/R.d1ed34ac8f711d6d807bacb7f217852c?rik=D3hF6b%2bxzryonA&riu=http%3a%2f%2fgraphicgoogle.com%2fwp-content%2fuploads%2f2017%2f10%2fFacebook-Fashion-Big-Sale-Banner.jpg&ehk=xAR7O2yBftDuPOZZ2li0TEjvnMDEw2%2fuJhTgzEniJoc%3d&risl=&pid=ImgRaw&r=0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+              </Carousel>
+            </div>
+            <img src={banner} width={400} height={500} />
           </div>
         </div>
       </Middle>
@@ -195,6 +223,8 @@ const Allcategories = () => {
         {prod?.length !== 0 ? (
           prod.map((product, index) => {
             if (product?.Addedby !== value && product?.status === 0) {
+              const addedToCart = isAddedToCart(product._id);
+
               return (
                 <Card
                   key={index}
@@ -210,7 +240,7 @@ const Allcategories = () => {
                       {product.image.map((i, index) => {
                         return (
                           <div key={index}>
-                            <img src={i} style={{ width: "300px" }} />
+                            <img src={i} style={{ width: "300px",height:"250px" }} />
                           </div>
                         );
                       })}
@@ -243,9 +273,13 @@ const Allcategories = () => {
                           textTransform: "capitalize",
                         }}
                         onClick={() => showModal(product)}
-                        disabled={!auth.user ? true : false}
+                        disabled={!auth.user || addedToCart}
                       >
-                        {!auth?.user ? "Login First" : "Add To Cart"}
+                        {!auth?.user
+                          ? "Login First"
+                          : addedToCart
+                          ? "Added to Cart"
+                          : "Add To Cart"}
                       </Button>
                     </span>
                   </p>
@@ -270,6 +304,7 @@ const Allcategories = () => {
             </Space>
           </div>
         )}
+
         <Modal
           title={`Product Id: ${mod._id}`}
           visible={isModalOpen}

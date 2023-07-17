@@ -21,7 +21,6 @@ const AddProducts = () => {
 
   const [details, setDetails] = useState([]);
 
-
   const image_to_base64 = (imageFile) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -32,7 +31,7 @@ const AddProducts = () => {
       reader.readAsDataURL(imageFile);
     });
   };
-  
+
   const handlePhotoUpload = (e) => {
     const fileArray = Array.from(e.target.files).map((file) => ({
       src: URL.createObjectURL(file),
@@ -64,9 +63,9 @@ const AddProducts = () => {
         })
       );
 
-      let val=localStorage.getItem("userAuth");
-      val=JSON.parse(val)
-      console.log(val.user)
+      let val = localStorage.getItem("userAuth");
+      val = JSON.parse(val);
+      console.log(val.user);
       const data = await axios.post(
         "http://localhost:8000/api/product/create-product",
         {
@@ -102,17 +101,39 @@ const AddProducts = () => {
     e.preventDefault();
 
     try {
-      if (!name || !des || !price || !quantity || !category || photos.length === 0) {
+      if (
+        !name ||
+        !des ||
+        !price ||
+        !quantity ||
+        !category ||
+        photos.length === 0
+      ) {
         setErr("All fields are required!");
         return;
       }
-      let val=localStorage.getItem("userAuth")
+
+      const photoBase64Array = await Promise.all(
+        photos.map(async (photo) => {
+          try {
+            const imageFile = await fetch(photo.src).then((response) =>
+              response.blob()
+            );
+            const photoBase64 = await image_to_base64(imageFile);
+            return photoBase64;
+          } catch (error) {
+            console.log("Error converting image to Base64:", error);
+          }
+        })
+      );
+      let val = localStorage.getItem("userAuth");
       val = JSON.parse(val);
       const data = await axios.post(
         "http://localhost:8000/api/product/create-product",
         {
           name,
-          images: null,
+          images: photoBase64Array,
+
           des,
           price,
           status: 1,
@@ -166,7 +187,9 @@ const AddProducts = () => {
             className="col-5"
             style={{ width: "100%", display: "flex", flexDirection: "column" }}
           >
-            <h1 style={{ textAlign: "left", height: "80px", marginLeft: "20px" }}>
+            <h1
+              style={{ textAlign: "left", height: "80px", marginLeft: "20px" }}
+            >
               Add Products
             </h1>
             <div className="w-50">

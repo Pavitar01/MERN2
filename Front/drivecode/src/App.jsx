@@ -36,6 +36,7 @@ import AllOrders from "./Components/Admin/Order";
 import AllOrder from "./Components/Vendor/Orders";
 import Policy from "./Pages/Policy";
 import TrackComponent from "./Pages/TrackComponent";
+import MyOrder from "./Components/Vendor/MyOrder";
 const App = () => {
   return (
     <>
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="vendor-draft" element={<Draft />} />
         <Route path="vendor-product" element={<EditProduct />} />
         <Route path="update-profile" element={<UpdateProfiles />} />
+        <Route path="my-order" element={<MyOrder />} />
         <Route path="all-order" element={<AllOrder />} />
         </Route>
 

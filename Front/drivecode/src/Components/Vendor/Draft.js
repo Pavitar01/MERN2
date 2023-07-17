@@ -5,6 +5,7 @@ import axios from "axios";
 import Card from "../Admin/Card";
 import VendorPannel from "./VendorPannel";
 import { useAuth } from "../../Auth/Index";
+import { Space, Spin } from "antd";
 const Draft = () => {
   const [prod, setProd] = useState([]);
   const { auth, setAuth } = useAuth();
@@ -71,7 +72,21 @@ const Draft = () => {
                   }
                 })
               ) : (
-                <h1>No Drafts product</h1>
+                <Space
+                  direction="vertical"
+                  style={{
+                    width: "50%",
+                    display:"flex",
+                    justifyContent:"center",
+                    height:"100%"
+                  }}
+                >
+                 <Space direction="vertical">
+                 <Spin tip="Fetching draft your products" size="large" style={{width:"300px"}}>
+                    <div className="content" />
+                  </Spin>
+                 </Space>
+                </Space>
               )}
             </div>
           </div>

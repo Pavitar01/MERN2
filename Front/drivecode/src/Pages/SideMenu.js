@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
+import banner2 from ".././Newfolder/banner2.jpg";
 const SideMenu = ({ setOption }) => {
   const [cat, setCat] = useState([]);
   const [activeCategory, setActiveCategory] = useState("");
@@ -29,7 +29,7 @@ const SideMenu = ({ setOption }) => {
 
   return (
     <nav
-      style={{ width: "300px", marginLeft: "-110px" }}
+      style={{ width: "300px", marginLeft: "-150px", position: "relative" }}
       id="sidebarMenu"
       className="collapse d-lg-block sidebar collapse bg-white"
     >
@@ -46,8 +46,7 @@ const SideMenu = ({ setOption }) => {
             <span>Home</span>
           </Button>
 
-          <Button
-            to="/home/trending"
+          <span
             className={`list-group-item list-group-item-action py-2 ripple ${
               activeCategory === "trending" ? "active" : ""
             }`}
@@ -55,34 +54,45 @@ const SideMenu = ({ setOption }) => {
           >
             <i className="fa-light fa-family-pants"></i>
             <span>All category </span>
-          </Button>
+          </span>
 
-          {cat.map((category, index) => (
-            <Button
-              key={index}
-              onClick={() => setOptions(category.name)}
-              style={{ height: "40px" }}
-              type="primary"
-              className={`list-group-item list-group-item-action py-2 ripple ${
-                activeCategory === category.name ? "active" : ""
-              }`}
-            >
-              <i className="fa-solid fa-star" style={{ float: "left" }}>
-                &nbsp;
-              </i>
-              <span
-                style={{
-                  textTransform: "capitalize",
-                  float: "left",
-                  marginLeft: "20px",
-                }}
+          <div
+            style={{ height: "300px", width: "100%", overflow: "scroll" }}
+            className="scrollBar"
+          >
+            {cat.map((category, index) => (
+              <Button
+                key={index}
+                onClick={() => setOptions(category.name)}
+                style={{ height: "40px" }}
+                type="primary"
+                className={`list-group-item list-group-item-action py-2 ripple ${
+                  activeCategory === category.name ? "active" : ""
+                }`}
               >
-                {category.name} Category
-              </span>
-            </Button>
-          ))}
+                <i className="fa-solid fa-star" style={{ float: "left" }}>
+                  &nbsp;
+                </i>
+                <span
+                  style={{
+                    textTransform: "capitalize",
+                    float: "left",
+                    marginLeft: "20px",
+                  }}
+                >
+                  {category.name} Category
+                </span>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
+      <img
+        src={banner2}
+        width={250}
+        height={200}
+        style={{ position: "absolute", bottom: "10px", left: "10%" }}
+      />
     </nav>
   );
 };

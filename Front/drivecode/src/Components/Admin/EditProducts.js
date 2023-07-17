@@ -4,6 +4,7 @@ import Middle from "../Middle";
 
 import axios from "axios";
 import Card from "./Card";
+import { Space, Spin } from "antd";
 
 const EditProducts = () => {
   const [prod, setProd] = useState([]);
@@ -42,22 +43,42 @@ const EditProducts = () => {
                 boxShadow: "1px 1px 10px 1px lightgray",
               }}
             >
-              {prod.map((i, index) => {
-                return (
-                  <Card
-                    key={index}
-                    orders={i.orders}
-                    quantity={i.quantity}
-                    name={i.name}
-                    category={i.category}
-                    price={i.price}
-                    des={i.des}
-                    pid={i._id}
-                    image={i.image}
-                    addedBy={i.Addedby}
-                  />
-                );
-              })}
+              {prod.length !== 0 ? (
+                prod.map((i, index) => {
+                  return (
+                    <Card
+                      key={index}
+                      orders={i.orders}
+                      quantity={i.quantity}
+                      name={i.name}
+                      category={i.category}
+                      price={i.price}
+                      des={i.des}
+                      pid={i._id}
+                      image={i.image}
+                      addedBy={i.Addedby}
+                      newstatus={i.status}
+                      status={i.status === 0 ? "Published" : "Draft"}
+                    />
+                  );
+                })
+              ) : (
+                <Space
+                  direction="vertical"
+                  style={{
+                    width: "50%",
+                    display:"flex",
+                    justifyContent:"center",
+                    height:"100%"
+                  }}
+                >
+                 <Space direction="vertical">
+                 <Spin tip="Fetching your products" size="large" style={{width:"300px"}}>
+                    <div className="content" />
+                  </Spin>
+                 </Space>
+                </Space>
+              )}
             </div>
           </div>
         </div>

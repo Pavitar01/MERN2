@@ -128,7 +128,8 @@ const deleteProductController = async (req, res) => {
 
 const updateProductController = async (req, res) => {
   try {
-    const { name, image, des, price, quantity, category } = req.body;
+    const { name, images, des, price, quantity, category } = req.body;
+
     if (!name) {
       return res.status(422).json({ message: "Name is required" });
     }
@@ -141,24 +142,38 @@ const updateProductController = async (req, res) => {
       return res.status(422).json({ message: "description is required" });
     }
 
-    if (!category) {
-      return res.status(422).json({ message: "category is required" });
-    }
+
 
     if (!quantity) {
       return res.status(422).json({ message: "Quantity is required" });
     }
-    Product.findOne({ _id: req.params.pid }).then((product) => {
-      product.name = req.body.name;
-      product.des = req.body.des;
-      product.price = req.body.price;
-      product.quantity = req.body.quantity;
-      product.category = req.body.category;
-      product.status = req.body.status;
-      return product.save();
-    });
+    if (images===null) {
+      return res.status(422).json({ message: "Images is required" });
+    }
+
+    // Find the product by ID
+    const product = await Product.findById(req.params.pid);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Update product fields
+    product.name = name;
+    product.des = des;
+    product.price = price;
+    product.quantity = quantity;
+    product.category = category;
+    product.status = req.body.status;
+
+    if (images && Array.isArray(images)) {
+      product.image = images;
+    }
+
+    await product.save();
+
     res.status(200).send({
-      message: "Product updated successfully !",
+      message: "Product updated successfully!",
       success: true,
     });
   } catch (error) {

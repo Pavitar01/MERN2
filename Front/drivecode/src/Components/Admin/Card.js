@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Carousel, Modal, Select, Tag, message } from "antd";
 import Meta from "antd/es/card/Meta";
 import axios from "axios";
@@ -13,7 +13,7 @@ const Cards = ({
   orders,
   status,
   newstatus,
-  image
+  image,
 }) => {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -22,9 +22,19 @@ const Cards = ({
   const [newStatus, setNewStatus] = useState(newstatus);
   const [newPrice, setNewPrice] = useState(price);
   const [newQuantity, setNewQuantity] = useState(quantity);
+  const [currentImages, setCurrentImages] = useState(image);
+  const [updatedImages, setUpdatedImages] = useState([]);
+  useEffect(() => {
+    setCurrentImages(image);
+  }, [image]);
+
   const showModal = () => {
     setOpen(true);
   };
+
+  useEffect(() => {
+    setCurrentImages(image);
+  }, [image]);
 
   const handleChange = (value) => {
     setNewStatus(value);
@@ -35,7 +45,6 @@ const Cards = ({
       const data = await axios.post(
         `http://localhost:8000/api/product/delete-product`,
         { id: pid }
-
       );
 
       if (data.data.success) {
@@ -56,9 +65,50 @@ const Cards = ({
     }
   };
 
+  const image_to_base64 = (imageFile) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(imageFile);
+    });
+  };
+
+  const handlePhotoUpload = (e) => {
+    const fileArray = Array.from(e.target.files).map((file) => ({
+      src: URL.createObjectURL(file),
+      alt: file.name,
+      file, // Store the File object for later use.
+    }));
+    setUpdatedImages(fileArray);
+  };
+
   const handleOk = async () => {
     setConfirmLoading(true);
 
+    // Create a new array with the updated images and the current images.
+    const mergedImages = [...updatedImages, ...currentImages];
+
+    const photoBase64Array = await Promise.all(
+      mergedImages.map(async (photo) => {
+        if (photo.file) {
+          try {
+            const imageFile = await fetch(photo.src).then((response) =>
+              response.blob()
+            );
+            const photoBase64 = await image_to_base64(imageFile);
+            return photoBase64;
+          } catch (error) {
+            console.log("Error converting image to Base64:", error);
+          }
+        } else {
+          // If the photo is not a File object, it's already a Base64 string.
+          return photo.src;
+        }
+      })
+    );
     try {
       const data = await axios.put(
         `http://localhost:8000/api/product/update-product/${pid}`,
@@ -69,6 +119,7 @@ const Cards = ({
           price: newPrice,
           status: newStatus,
           category: category,
+          images: photoBase64Array,
         }
       );
       if (data.data.success) {
@@ -102,11 +153,10 @@ const Cards = ({
       style={{ width: 300, height: 500, margin: "10px" }}
       cover={
         <Carousel autoplay>
-
           {image.map((i, index) => {
             return (
               <div key={index}>
-                <img src={i} style={{ width: "300px" }} />
+                <img src={i} style={{ width: "300px", height: "250px" }} />
               </div>
             );
           })}
@@ -155,7 +205,7 @@ const Cards = ({
             <label for="exampleFormControlInput1">Price</label>
 
             <input
-              type="text"
+              type="number"
               className="form-control"
               id="exampleFormControlInput1"
               value={newPrice}
@@ -163,21 +213,17 @@ const Cards = ({
                 setNewPrice(e.target.value);
               }}
             />
-            <label for="exampleFormControlSelect1">Select quantity</label>
-            <select
+            <label for="exampleFormControlSelect1">Update quantity</label>
+
+            <input
+              type="number"
               className="form-control"
-              id="exampleFormControlSelect1"
-              value={Option.value}
+              id="exampleFormControlInput1"
+              value={newPrice}
               onChange={(e) => {
                 setNewQuantity(e.target.value);
               }}
-            >
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-            </select>
+            />
           </div>
 
           <div className="form-group">
@@ -186,26 +232,35 @@ const Cards = ({
               onChange={(e) => {
                 setNewDes(e.target.value);
               }}
-              value={des}
+              value={newDes}
               className="form-control"
               id="exampleFormControlTextarea1"
               rows="3"
             ></textarea>
           </div>
+          <div>
+            <p>Current Image:</p>
+            {currentImages.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`Current Image ${index}`}
+                style={{ width: "100px", height: "100px", marginRight: "10px" }}
+              />
+            ))}
+          </div>
           <div style={{ display: "flex" }}>
             <input
-              onChange={(e) => {
-                if (e.target.files[0]) {
-                  //   setP2({
-                  //     src: URL.createObjectURL(e.target.files[0]),
-                  //     alt: e.target.files[0].name,
-                  //   });
-                }
-              }}
+              onChange={handlePhotoUpload}
               type="file"
+              multiple
               className="form-control-file"
-              id="exampleFormControlFile1"
-              style={{ border: "none", height: "50px" }}
+              id="productImages"
+              style={{
+                border: "none",
+                height: "50px",
+                border: "1px solid gray",
+              }}
             />
           </div>
           <Select

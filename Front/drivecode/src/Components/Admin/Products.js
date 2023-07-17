@@ -108,20 +108,32 @@ const AddProducts = () => {
         setErr("All fields are required!");
         return;
       }
+      const photoBase64Array = await Promise.all(
+        photos.map(async (photo) => {
+          try {
+            const imageFile = await fetch(photo.src).then((response) =>
+              response.blob()
+            );
+            const photoBase64 = await image_to_base64(imageFile);
+            return photoBase64;
+          } catch (error) {
+            console.log("Error converting image to Base64:", error);
+          }
+        })
+      );
       let val = localStorage.getItem("userAuth");
       val = JSON.parse(val);
       const data = await axios.post(
         "http://localhost:8000/api/product/create-product",
         {
           name,
-          images: null,
+          images: photoBase64Array,
           des,
           price,
           status: 1,
           quantity,
           category,
           Addedby: val.user.id,
-
           order: 0,
         }
       );

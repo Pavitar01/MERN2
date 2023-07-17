@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Middle from "../Middle";
 import SideMenu from "../../Pages/SideMenu";
-import { Button, Card, Modal } from "antd";
+import { Button, Card, Carousel, Modal, Spin } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useAuth } from "../../Auth/Index";
 
@@ -80,10 +80,28 @@ const BestSeller = () => {
   return (
     <Middle>
       <div className="container-fluid" style={{ display: "flex" }}>
-        <div className="col-12">
-          <h1 style={{ textAlign: "center" }}>BEST SELLING PRODUCTS</h1>
-          <p> ( Product have more than five sales )</p>
-          <div style={{ display: "flex" }}>
+        <div className="col-11">
+          <h1 style={{ textAlign: "center", color: "gray" }}>
+            BEST SELLING PRODUCTS
+          </h1>
+          <p>
+            {" "}
+            ( Product have more than five sales )
+            <br />
+            -- Many times Added to cart items --
+          </p>
+          <div
+            style={{
+              display: "flex",
+              width: "100%",
+              overflow: "scroll",
+              flexWrap: "wrap",
+              height: "80vh",
+              padding: "10px",
+              gap: "20px",
+              justifyContent: "space-around",
+            }}
+          >
             {prod.length !== 0 ? (
               prod.map((i, index) => {
                 if (i.status !== 1) {
@@ -91,12 +109,26 @@ const BestSeller = () => {
                     <Card
                       key={index}
                       hoverable
-                      style={{ width: 240, height: 400,textTransform:"capitalize" }}
+                      style={{
+                        width: 300,
+                        height: 500,
+                        margin: "20px",
+                        boxShadow: "1px 1px 10px 1px lightgray",
+                        textTransform: "capitalize",
+                      }}
                       cover={
-                        <img
-                          alt="example"
-                          src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-                        />
+                        <Carousel autoplay>
+                          {i.image.map((i, index) => {
+                            return (
+                              <div key={index}>
+                                <img
+                                  src={i}
+                                  style={{ width: "300px", height: "250px" }}
+                                />
+                              </div>
+                            );
+                          })}
+                        </Carousel>
                       }
                     >
                       <Meta title={i.name} />
@@ -156,7 +188,7 @@ const BestSeller = () => {
                   justifyContent: "center",
                 }}
               >
-                No Products Available At This Moment
+                 <Spin size="large" />
               </div>
             )}
             <Modal
@@ -165,38 +197,27 @@ const BestSeller = () => {
               onOk={handleOk}
               onCancel={handleCancel}
             >
-              <img
-                alt="example"
-                src="https://th.bing.com/th/id/OIP.4gizB9_xXckR4sDo9OoOHwHaHa?pid=ImgDet&rs=1"
-              />
-              <h1 style={{ textAlign: "left",textTransform:"capitalize" }}>
+              <Carousel autoplay>
+                {mod.image && mod.image.length > 0 ? (
+                  mod.image.map((imageUrl, index) => (
+                    <div key={index}>
+                      <img
+                        src={imageUrl}
+                        style={{ width: "300px", marginLeft: "90px" }}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div>No images available.</div>
+                )}
+              </Carousel>
+              <h1 style={{ textAlign: "left", textTransform: "capitalize" }}>
                 {mod.name} <br />
                 <span style={{ fontSize: "20px", fontWeight: "100" }}>
                   Description:{mod.des}
                 </span>
               </h1>
               <h3> &#8377;{mod.price} </h3>
-              <div style={{ display: "flex", gap: "5px" }}>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  value="Input"
-                  onClick={handleClick2}
-                  disabled={counter <= 1 ? true : false}
-                >
-                  -
-                </button>
-                <h5>{counter}</h5>
-                <button
-                  className="btn btn-primary"
-                  type="button"
-                  value="Input"
-                  onClick={handleClick1}
-                  disabled={counter >= 10 ? true : false}
-                >
-                  +
-                </button>
-              </div>
             </Modal>
           </div>
         </div>

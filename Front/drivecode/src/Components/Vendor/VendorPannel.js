@@ -112,6 +112,15 @@ const VendorPannel = ({url}) => {
             Orders
           </button>
         </Link>
+        <Link to="/vendor-dashboard/my-order">
+          <button
+            type="button"
+            class="btn btn-outline-dark"
+            style={{ width: "20rem" }}
+          >
+            My orders
+          </button>
+        </Link>
         <Link to="/vendor-dashboard/vendor-draft">
           <button
             type="button"

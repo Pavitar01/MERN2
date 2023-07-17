@@ -26,7 +26,7 @@ const get_cart_items = async (req, res) => {
 const update_cart_item = async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
-try {
+  try {
     let cart = await Cart.findOne({ userId });
     let item = await Product.findOne({ _id: productId });
     if (!item) {
@@ -34,7 +34,8 @@ try {
     }
     const price = item.price;
     const name = item.name;
-    const image=[item.image]
+    const image = [item.image];
+    const bill = quantity * price;
 
     if (cart) {
       // if cart exists for the user
@@ -44,19 +45,20 @@ try {
       if (itemIndex > -1) {
         let productItem = cart.items[itemIndex];
         productItem.quantity = quantity;
+        productItem.bill = bill;
         cart.items[itemIndex] = productItem;
       } else {
-        cart.items.push({ productId, name, quantity, price,image });
+        cart.items.push({ productId, name, quantity, price, image, bill });
       }
-      cart.bill = quantity * price;
+      calculateCartBill(cart);
       cart = await cart.save();
       return res.status(201).send(cart);
     } else {
       // no cart exists, create one
       const newCart = await Cart.create({
         userId,
-        items: [{ productId, name, quantity, price,image }],
-        bill: quantity * price,
+        items: [{ productId, name, quantity, price, image, bill }],
+        bill: bill,
       });
       return res.status(201).send(newCart);
     }
@@ -77,17 +79,17 @@ const add_cart_item = async (req, res) => {
     }
 
     const user = await User.findOne({ _id: userId });
-
     const price = item.price;
     const name = item.name;
     const sellerId = item.Addedby;
     const userDetails = {
-      name: user.name,
-      address: user.address,
-      email: user.email,
-      phone: user.phone
+      name: user?.name,
+      address: user?.address,
+      email: user?.email,
+      phone: user?.phone,
     };
- const image=item.image
+    const image = item.image;
+    const bill = quantity * price;
 
     // Update the order of the product based on quantity
     item.orders += quantity;
@@ -101,19 +103,40 @@ const add_cart_item = async (req, res) => {
       if (itemIndex > -1) {
         let productItem = cart.items[itemIndex];
         productItem.quantity = quantity;
+        productItem.bill = bill;
         cart.items[itemIndex] = productItem;
       } else {
-        cart.items.push({ productId, name, quantity, price, sellerId, userDetails, image });
+        cart.items.push({
+          productId,
+          name,
+          quantity,
+          price,
+          sellerId,
+          userDetails,
+          image,
+          bill,
+        });
       }
-      cart.bill += quantity * price;
+      calculateCartBill(cart);
       cart = await cart.save();
       return res.status(201).send(cart);
     } else {
       // no cart exists, create one
       const newCart = await Cart.create({
         userId,
-        items: [{ productId, name, quantity, price, sellerId, userDetails, image }],
-        bill: quantity * price,
+        items: [
+          {
+            productId,
+            name,
+            quantity,
+            price,
+            sellerId,
+            userDetails,
+            image,
+            bill,
+          },
+        ],
+        bill: bill,
       });
       return res.status(201).send(newCart);
     }
@@ -121,6 +144,18 @@ const add_cart_item = async (req, res) => {
     console.log(err);
     res.status(500).send("Something went wrong");
   }
+};
+
+// Helper function to calculate the total bill of the cart
+const calculateCartBill = (cart) => {
+  let totalBill = 0;
+  for (const item of cart.items) {
+    if (!isNaN(item.quantity) && !isNaN(item.price)) {
+      item.bill = item.quantity * item.price;
+      totalBill += item.bill;
+    }
+  }
+  cart.bill = totalBill;
 };
 
 

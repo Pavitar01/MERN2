@@ -57,7 +57,6 @@ const Cart = () => {
           quantity: counter + 1,
         }
       );
-      console.log(response.data);
       if (response.data.success) {
         setCart2(response.data.cart);
         setCart(response.data.cart.items);
@@ -77,9 +76,10 @@ const Cart = () => {
         `http://localhost:8000/api/cart-item/cart/${val.user.id}/${productId}`
       );
       if (response.data.success) {
+      messageApi.success("Item Deleted")
         setCart(response.data.cart.items);
       } else {
-        console.log("Failed in deleting!");
+        messageApi.error("Failed in deleting!");
       }
     } catch (error) {
       console.log(error);
@@ -148,7 +148,6 @@ const Cart = () => {
             type: "success",
             content: "Order has been placed successfully! Check your Orders",
           });
-          navigate("/vendor-dashboard/all-order")
         }
       } catch (error) {
         console.log(error);
@@ -229,31 +228,16 @@ const Cart = () => {
                     </Card>
 
                     <div>
-                      <Popover
-                        content={
-                          <Button
-                          type="primary"
-                            onClick={() => {
-                              handleDelete(item.productId);
-                            }}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Ok
-                          </Button>
-                        }
-                        title="Confirm"
-                        trigger="click"
-                        open={open}
-                        onOpenChange={handleOpenChange}
-                      >
+                  
                         <Button
                           type="primary"
                           danger
+                          onClick={()=>   handleDelete(item.productId)}
                           style={{ float: "right" }}
                         >
                           <i className="fa-sharp fa-solid fa-trash"></i>
                         </Button>
-                      </Popover>
+                   
                       <div
                         style={{
                           display: "flex",

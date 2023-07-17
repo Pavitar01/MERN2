@@ -13,7 +13,7 @@ const CartRouter = require("./Routes/CartRoutes");
 const { createOrder } = require("./Controllers/OrderController");
 const OrderRouter = require("./Routes/OrderRoutes");
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",

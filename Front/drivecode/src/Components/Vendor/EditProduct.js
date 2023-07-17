@@ -5,9 +5,9 @@ import axios from "axios";
 import Card from "../Admin/Card";
 import VendorPannel from "./VendorPannel";
 import { useAuth } from "../../Auth/Index";
+import { Space, Spin } from "antd";
 const EditProduct = () => {
   const [prod, setProd] = useState([]);
-  const { auth, setAuth } = useAuth();
   useEffect(() => {
     const a = async () => {
       let val = localStorage.getItem("userAuth");
@@ -49,6 +49,7 @@ const EditProduct = () => {
             >
               {prod.length !== 0 ? (
                 prod.map((i, index) => {
+
                   if (i.status !== 1) {
                     return (
                       <Card
@@ -64,12 +65,27 @@ const EditProduct = () => {
                         addedBy={i.Addedby}
                         newstatus={i.status}
                         status={i.status === 0 ? "Published" : "Draft"}
+
                       />
                     );
                   }
                 })
               ) : (
-                <h1>No Publised product</h1>
+                <Space
+                  direction="vertical"
+                  style={{
+                    width: "50%",
+                    display:"flex",
+                    justifyContent:"center",
+                    height:"100%"
+                  }}
+                >
+                 <Space direction="vertical">
+                 <Spin tip="Fetching published your products" size="large" style={{width:"300px"}}>
+                    <div className="content" />
+                  </Spin>
+                 </Space>
+                </Space>
               )}
             </div>
           </div>

@@ -78,13 +78,60 @@ const getOrderForVendor = async (req, res) => {
     // Find orders by seller ID
     const orders = await Order.find({ "items.sellerId": sellerId });
 
-    // Respond with the fetched orders
-    res.status(200).json(orders);
+    // Calculate total earnings
+    const totalEarnings = orders.reduce((total, order) => {
+      const orderEarnings = order.items.reduce((earnings, item) => {
+        if (item.sellerId === sellerId) {
+          return earnings + item.price * item.quantity;
+        }
+        return earnings;
+      }, 0);
+      return total + orderEarnings;
+    }, 0);
+
+    // Respond with the fetched orders and total earnings
+    res.status(200).send({ orders, totalEarnings,success:true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).send({ error: "Internal Server Error" });
   }
 };
+
+// 
+// const getOrderForVendor = async (req, res) => {
+//   try {
+//     const sellerId = req.params.sellerId;
+
+//     // Find orders by seller ID
+//     const orders = await Order.find({ "items.sellerId": sellerId });
+
+//     // Calculate total earnings
+//     const totalEarnings = orders.reduce((total, order) => {
+//       const orderEarnings = order.items.reduce((earnings, item) => {
+//         if (item.sellerId === sellerId) {
+//           // Reduce price from earnings when item status is 1 or 3
+//           if (item.status === 1 || item.status === 3) {
+//             return earnings + (item.price - item.discount) * item.quantity;
+//           } else {
+//             return earnings + item.price * item.quantity;
+//           }
+//         }
+//         return earnings;
+//       }, 0);
+//       return total + orderEarnings;
+//     }, 0);
+
+//     // Respond with the fetched orders and total earnings
+//     res.status(200).send({ orders, totalEarnings, success: true });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send({ error: "Internal Server Error", success: false });
+//   }
+// };
+
+
+
+
 
 const updateProductStatus = async (req, res) => {
   try {
