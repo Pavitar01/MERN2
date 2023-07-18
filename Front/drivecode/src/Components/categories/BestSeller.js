@@ -102,6 +102,7 @@ const BestSeller = () => {
               gap: "20px",
               justifyContent: "space-around",
             }}
+            className="scrollBar"
           >
             {prod.length !== 0 ? (
               prod.map((i, index) => {

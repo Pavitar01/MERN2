@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Middle from "../Middle";
 import axios from "axios";
-import { Modal, Upload } from "antd";
 import { Select } from "antd";
 import { useAuth } from "../../Auth/Index";
 import VendorPannel from "./VendorPannel";
