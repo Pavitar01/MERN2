@@ -73,7 +73,6 @@ const Header = ({prod, handleSearchString, searchString }) => {
     };
     fetchData();
   }, []);
-  console.log(Details)
 
   return (
     <nav className="navbar navbar-expand-lg bg-light">
