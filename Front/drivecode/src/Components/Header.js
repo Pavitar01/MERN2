@@ -59,6 +59,22 @@ const Header = ({prod, handleSearchString, searchString }) => {
     fetchCategories();
   }, [auth]);
 
+
+
+  const [Details,setDetails]=useState([])
+  useEffect(() => {
+    let val = localStorage.getItem("userAuth");
+    val = JSON.parse(val);
+    const fetchData = async () => {
+      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
+        email: val?.user?.email,
+      });
+      setDetails(data.data);
+    };
+    fetchData();
+  }, []);
+  console.log(Details)
+
   return (
     <nav className="navbar navbar-expand-lg bg-light">
       <div className="container-fluid">
@@ -89,7 +105,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
             /> */}
           </form>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            {auth?.user?.role === 2 ? (
+            {Details?.role === 2 ? (
               ""
             ) : (
               <>
@@ -134,23 +150,23 @@ const Header = ({prod, handleSearchString, searchString }) => {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  {auth?.user?.name}
+                  {Details.name}
                 </Link>
                 <div
                   className="dropdown-menu"
                   aria-labelledby="navbarDropdownMenuLink"
                 >
-                  {auth?.user?.role === 0 && (
+                  {Details.role === 0 && (
                     <NavLink className="dropdown-item" to="/user-dashboard">
                       User Dashboard
                     </NavLink>
                   )}
-                  {auth?.user?.role === 1 && (
+                  {Details.role === 1 && (
                     <NavLink className="dropdown-item" to="/vendor-dashboard">
                       Vendor Dashboard
                     </NavLink>
                   )}
-                  {auth?.user?.role === 2 && (
+                  {Details.role === 2 && (
                     <NavLink className="dropdown-item" to="/admin-dashboard">
                       Admin Dashboard
                     </NavLink>
@@ -161,7 +177,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
                 </div>
               </li>
             )}
-            {auth?.user?.role === 2 ? (
+            {Details.role === 2 ? (
               ""
             ) : (
               <li className="nav-item">

@@ -59,6 +59,8 @@ const EditProducts = () => {
                       addedBy={i.Addedby}
                       newstatus={i.status}
                       status={i.status === 0 ? "Published" : "Draft"}
+                      outstock={i.outStock === 1 ? "Out of stock" : "Have Stock"}
+
                     />
                   );
                 })

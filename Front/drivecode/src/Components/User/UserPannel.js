@@ -24,7 +24,7 @@ const UserPannel = ({url}) => {
     };
     a();
   }, []);
-  console.log(details)
+
   return (
     <div className="col-4 ">
       <div
@@ -33,7 +33,7 @@ const UserPannel = ({url}) => {
       >
         <img
           className="card-img-top"
-          src={details.photo}
+          src={details.photo || "https://glplaw.com/wp-content/uploads/2021/03/4.png"}
           alt="Card image cap"
           style={{ width: "100px", height: "100px" }}
         />
@@ -56,13 +56,13 @@ const UserPannel = ({url}) => {
             className="card-title"
             style={{ textAlign: "center", width: "100%" }}
           >
-            {auth.user.email}
+            {details.email}
           </h6>
           <h6
             className="card-title"
             style={{ textAlign: "center", width: "100%" }}
           >
-            {auth.user.phone}
+            {details.phone}
           </h6>
         </div>
       </div>

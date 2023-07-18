@@ -202,8 +202,14 @@ const UpdateProfiles = () => {
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer",height:"50%",marginTop:"10px" }}
+                style={{
+                  marginBottom: "20px",
+                  cursor: "pointer",
+                  height: "50%",
+                  marginTop: "10px",
+                }}
               />
+              <Button type="primary">Upload Logo</Button>
             </form>
           </div>
         </div>

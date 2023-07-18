@@ -72,7 +72,7 @@ const Footer = () => {
                     Get Started<span></span>
                   </h5>
                   <p style={{textAlign:"left",marginBottom:"20px"}}>Get access to our all cloths realted, electrical related,beauty realted and many more category products </p>
-                  <a class="btn" href="https://bit.ly/3m9avif" target="_blank">
+                  <a class="btn" href="" target="_blank">
                     Subscribe Now
                   </a>
                 </div>

@@ -14,7 +14,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Meta from "antd/es/card/Meta";
+
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -30,7 +30,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const [isModalOpen1, setIsModalOpen1] = useState(false);
-  const [isModalOpen2, setIsModalOpen2] = useState(false);
+
 
   const showModal1 = () => {
     setIsModalOpen1(true);
@@ -143,13 +143,7 @@ const Cart = () => {
     fetchData();
   }, [val]);
 
-  const [open, setOpen] = useState(false);
-  const hide = () => {
-    setOpen(false);
-  };
-  const handleOpenChange = (newOpen) => {
-    setOpen(newOpen);
-  };
+
 
   useEffect(() => {
     let val = localStorage.getItem("userAuth");
@@ -386,7 +380,7 @@ const Cart = () => {
             >
               <Card
                 hoverable
-                style={{ width: 600,marginLeft:"10%" }}
+                style={{ width: 600, marginLeft: "10%" }}
                 cover={
                   <img
                     alt="example"
