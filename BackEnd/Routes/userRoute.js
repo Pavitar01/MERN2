@@ -7,7 +7,7 @@ const {
   adminDashBoardController,
   updateProfileController,
   allUserController,
-  loginWithGoogle,
+  loginWithGoogle,updateLogo,
   registerWithGoogle
 } = require("../Controllers/UserController");
 const { isSignIn, IsAdmin } = require("../middleware/userMiddleWare");
@@ -28,6 +28,7 @@ router.get("/user-dashboard", isSignIn, userDashBoardController)
 router.get("/admin-dashboard", isSignIn,IsAdmin, adminDashBoardController);
 
 router.put("/update-profile",updateProfileController);
+router.put("/update-logo",updateLogo);
 router.post("/all-user",allUserController);
 
 

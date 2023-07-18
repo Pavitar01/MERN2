@@ -8,7 +8,8 @@ import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
 import { useNavigate } from "react-router-dom";
 import banner from "../../Newfolder/banner.jpg";
-import banner2 from "../../Newfolder/banner2.jpg";
+import { useSelector, useDispatch } from "react-redux";
+import { setProducts } from "../../Redux/Slice";
 
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
@@ -27,17 +28,9 @@ const Allcategories = () => {
   const navigate = useNavigate();
   const [options, setOptions] = useState("");
   const [num, setNum] = useState(0);
-  // Function is called every time the increment button is clicked
-  const handleClick1 = () => {
-    // Counter state is incremented
-    setCounter(counter + 1);
-  };
 
-  // Function is called every time the decrement button is clicked
-  const handleClick2 = () => {
-    // Counter state is decremented
-    setCounter(counter - 1);
-  };
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.products.products);
 
   const user = {
     _id: 12345678,
@@ -62,14 +55,14 @@ const Allcategories = () => {
               product.name.toLowerCase().includes(searchString.toLowerCase())
             );
           }
-          setProd(filteredProducts);
+          dispatch(setProducts(filteredProducts)); 
         }
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [options, searchString, num]);
+  }, [options, searchString, num, dispatch]);
 
   let val = localStorage.getItem("userAuth");
   val = JSON.parse(val);

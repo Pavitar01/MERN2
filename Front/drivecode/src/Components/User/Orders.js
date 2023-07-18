@@ -4,6 +4,7 @@ import Middle from "../Middle";
 import { Button } from "antd";
 import axios from "axios";
 import { message } from "antd";
+import OrderHistory from "../../Pages/OrderHistory";
 
 const Orders = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -83,46 +84,55 @@ const Orders = () => {
               </thead>
               <tbody>
                 {order?.map((orderItem, orderIndex) =>
-                  orderItem.items.map((item, itemIndex) => (
-                    <tr key={itemIndex}>
-                      <th scope="row">{orderIndex}</th>
-                      <td>{item.name}</td>
-                      <td>{item.price}</td>
-                      <td>{item.quantity}</td>
-                      <td>
-                        {item.status === 0
-                          ? "Cancelled"
-                          : item.status === 1
-                          ? "Processing"
-                          : item.status === 2
-                          ? "Delivered"
-                          : item.status === 3
-                          ? "Disabled"
-                          : item.status === 4
-                          ? "Shipped"
-                          : item.status === 5
-                          ? "on the way"
-                          : item.status === 6 && "Active"}
-                      </td>
-                      <td>
-                        <Button
-                          type="primary"
-                          danger
-                          disabled={
-                            isCancelButtonDisabled ||
-                            item.status === 0 ||
-                            item.status === 2
-                          }
-                          onClick={() => handleCancel(orderIndex, itemIndex)}
-                        >
-                          Cancel
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
+                  orderItem.items.map((item, itemIndex) => {
+                    if (item.status !== 0 && item.status !== 2) {
+                      return (
+                        <tr key={itemIndex}>
+                          <th scope="row">#</th>
+                          <td>{item.name}</td>
+                          <td>{item.price}</td>
+                          <td>{item.quantity}</td>
+                          <td>
+                            {item.status === 0
+                              ? "Cancelled"
+                              : item.status === 1
+                              ? "Processing"
+                              : item.status === 2
+                              ? "Delivered"
+                              : item.status === 3
+                              ? "Disabled"
+                              : item.status === 4
+                              ? "Shipped"
+                              : item.status === 5
+                              ? "on the way"
+                              : item.status === 6 && "Active"}
+                          </td>
+                          <td>
+                            <Button
+                              type="primary"
+                              danger
+                              disabled={
+                                isCancelButtonDisabled ||
+                                item.status === 0 ||
+                                item.status === 2
+                              }
+                              onClick={() =>
+                                handleCancel(orderIndex, itemIndex)
+                              }
+                            >
+                              Cancel
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    }
+                    return null;
+                  })
                 )}
               </tbody>
             </table>
+            <h2 style={{ color: "gray" }}>Order History</h2>
+            <OrderHistory order={order} />
           </div>
         </div>
       </div>

@@ -12,7 +12,8 @@ const {
   getVendorProductsController,
   getProductByCatController,
   getVendorById,
-  stockHandleController
+  updatePhotoController,
+  stockHandleController,
 } = require("../Controllers/ProductController");
 const productRouter = express.Router();
 const multer = require("multer");
@@ -61,6 +62,11 @@ productRouter.put(
   // isSignIn,
   // IsAdmin,
   updateProductController
+);
+productRouter.put(
+  "/update-photo/:pid",
+
+  updatePhotoController
 );
 
 module.exports = { productRouter };

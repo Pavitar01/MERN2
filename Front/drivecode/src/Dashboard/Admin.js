@@ -9,7 +9,7 @@ const AdminDashBoard = (props) => {
         <div className="row  mt-5">
           <AdminPannel />
           <div className="col-8">
-            <h1>My Products</h1>
+            <h1>Hi, Admin</h1>
           </div>
         </div>
       </div>

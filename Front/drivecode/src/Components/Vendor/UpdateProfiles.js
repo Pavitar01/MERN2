@@ -5,7 +5,7 @@ import { Button, Modal, message } from "antd";
 import axios from "axios";
 import VendorPannel from "./VendorPannel";
 import { useNavigate } from "react-router-dom";
-
+import imgurl from "../../assets/yourlogo.png";
 const image_to_base64 = (imageFile) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -24,18 +24,7 @@ const UpdateProfiles = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [val, setVal] = useState(0);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +56,40 @@ const UpdateProfiles = () => {
   };
 
   const [messageApi, contextHolder] = message.useMessage();
+  const handleChange = async () => {
+    let photoBase64 = null;
+    if (imagePreview && imagePreview.src) {
+      try {
+        const imageFile = await fetch(imagePreview.src).then((response) =>
+          response.blob()
+        );
+        photoBase64 = await image_to_base64(imageFile);
+      } catch (error) {
+        console.log("Error converting image to Base64:", error);
+      }
+    }
+
+    const data = await axios.put(
+      "http://localhost:8000/api/auth/update-logo",
+      {
+        logo: photoBase64,
+        curreemail: auth?.user?.email,
+
+      }
+    );
+
+    if (data.data.success) {
+      messageApi.open({
+        type: "success",
+        content: "Logo updated successfully!",
+      });
+    } else {
+      messageApi.open({
+        type: "error",
+        content: "Error in updating Logo!",
+      });
+    }
+  };
 
   const handleSubmit = async (e) => {
     setVal(val + 1);
@@ -121,10 +144,9 @@ const UpdateProfiles = () => {
       {contextHolder}
 
       <div className="container">
-        <div className="row  mt-5">
+        <div className="row  mt-7">
           <VendorPannel url={all.photo} />
-          <div className="col-8">
-            <h1>Update Your Profile</h1>
+          <div className="col-7" style={{ display: "flex" }}>
             <form onSubmit={handleSubmit}>
               <label>Upload Image</label>
               <input
@@ -166,7 +188,7 @@ const UpdateProfiles = () => {
 
               <label>Phone Number</label>
               <input
-                type="tel"
+                type="number"
                 name="phoneNumber"
                 placeholder="Phone Number"
                 readOnly
@@ -205,12 +227,51 @@ const UpdateProfiles = () => {
                 style={{
                   marginBottom: "20px",
                   cursor: "pointer",
-                  height: "50%",
+                  height: "50px",
                   marginTop: "10px",
                 }}
               />
-              <Button type="primary">Upload Logo</Button>
             </form>
+            <div
+              style={{ width: "300px", height: "80px", marginLeft: "20px" }}
+              className="logoimg"
+            >
+            <h5 style={{marginTop:"-30px",color:"gray"}}>Choose</h5>
+              <input
+                onChange={(e) => {
+                  if (e.target.files[0]) {
+                    setImagePreview({
+                      src: URL.createObjectURL(e.target.files[0]),
+                      alt: e.target.files[0].name,
+                    });
+                  }
+                }}
+                type="file"
+                style={{
+                  opacity:"0",
+                  height:"100px",
+                  border: "none",
+                  cursor:"pointer"
+                }}
+              />
+              <Button type="primary" onClick={handleChange} style={{width:"100%"}}>
+                Upload
+              </Button>
+              {all.logo && (
+                <img
+                  src={all.logo || imagePreview}
+                  alt="Preview"
+                  style={{
+                    width: "300px",
+                    height: "300px",
+                    borderRadius: "100%",
+                    padding: "5px",
+                    marginTop:"10px",
+                    border: "1px solid black",
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

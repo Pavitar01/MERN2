@@ -144,15 +144,14 @@ const updateProductController = async (req, res) => {
     if (!quantity) {
       return res.status(422).json({ message: "Quantity is required" });
     }
-    if (images === null) {
-      return res.status(422).json({ message: "Images is required" });
-    }
 
     // Find the product by ID
     const product = await Product.findById(req.params.pid);
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res
+        .status(404)
+        .json({ message: "Product not found", success: false });
     }
 
     // Update product fields
@@ -162,10 +161,6 @@ const updateProductController = async (req, res) => {
     product.quantity = quantity;
     product.category = category;
     product.status = req.body.status;
-
-    if (images && Array.isArray(images)) {
-      product.image = images;
-    }
 
     await product.save();
 
@@ -277,13 +272,15 @@ const stockHandleController = async (req, res) => {
   const { id, value } = req.body;
 
   try {
-    await Product.findOne({ _id: id }).then((product) => {
-      product.outStock = value;
+    await Product.findOne({ _id: id })
+      .then((product) => {
+        product.outStock = value;
 
-      return product.save();
-    }).catch((err)=>{
-      console.log("Errrrr : ", err);  
-    })
+        return product.save();
+      })
+      .catch((err) => {
+        console.log("Errrrr : ", err);
+      });
     res.status(200).send({
       message: "Stocks Status updated successfully !",
       success: true,
@@ -297,6 +294,32 @@ const stockHandleController = async (req, res) => {
   }
 };
 
+const updatePhotoController = async (req, res) => {
+  const product = await Product.findById(req.params.pid);
+  const { images } = req.body;
+  try {
+    if (!product) {
+      return res
+        .status(404)
+        .json({ message: "Product not found", success: false });
+    }
+    if (images && Array.isArray(images)) {
+      product.image = images;
+    }
+    await product.save();
+
+    res.status(200).send({
+      message: "Product updated successfully!",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error in updating product",
+      error,
+    });
+  }
+};
 module.exports = {
   createProdutController,
   getProductController,
@@ -310,4 +333,5 @@ module.exports = {
   getProductByCatController,
   getVendorById,
   stockHandleController,
+  updatePhotoController,
 };

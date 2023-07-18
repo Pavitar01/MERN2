@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const JWT = require("jsonwebtoken");
 const registerController = async (req, res) => {
   try {
-    const { name, email, pass, phone, address, role, ans, flag,photo } = req.body;
+    const { name, email, pass, phone, address, role, ans, flag, photo } =
+      req.body;
     if (!name) {
       return res.send({ error: "Name is required" });
     }
@@ -64,7 +65,6 @@ const registerController = async (req, res) => {
   }
 };
 
-
 const loginWithGoogle = async (req, res) => {
   try {
     const { email } = req.body;
@@ -74,7 +74,7 @@ const loginWithGoogle = async (req, res) => {
     if (!foundUser) {
       return res.send({ success: false, message: "Email not registered" });
     }
-    
+
     // Checking if the user is valid
     if (foundUser.flag === 1) {
       const token = JWT.sign({ _id: foundUser.id }, process.env.JWT_SECRET, {
@@ -107,7 +107,6 @@ const loginWithGoogle = async (req, res) => {
     });
   }
 };
-
 
 const loginController = async (req, res) => {
   try {
@@ -219,7 +218,6 @@ const updateProfileController = async (req, res) => {
       });
     }
 
-    
     user.email = email;
     user.name = name;
     user.phone = phone;
@@ -244,9 +242,39 @@ const updateProfileController = async (req, res) => {
     });
   }
 };
-const registerWithGoogle=async(req,res)=>{
+const updateLogo = async (req, res) => {
+  try {
+    const { logo, curreemail } = req.body;
 
-}
+    const user = await User.findOne({ email: curreemail });
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (logo) {
+      user.logo = logo;
+    }
+
+    await user.save();
+
+    res.status(200).send({
+      success: true,
+      message: "logo updated successfully!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in updating logo",
+      error: error,
+    });
+  }
+};
+const registerWithGoogle = async (req, res) => {};
 const allUserController = async (req, res) => {
   try {
     await User.findOne({ email: req.body.email }).then((resp) => {
@@ -269,5 +297,6 @@ module.exports = {
   updateProfileController,
   allUserController,
   registerWithGoogle,
+  updateLogo,
   loginWithGoogle,
 };

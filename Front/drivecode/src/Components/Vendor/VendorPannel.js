@@ -4,11 +4,10 @@ import { Link } from "react-router-dom";
 import Middle from "../Middle";
 import axios from "axios";
 
-
-const VendorPannel = ({url}) => {
+const VendorPannel = ({ url }) => {
   const [auth, setAuth] = useAuth();
-  const [details,setDetails]=useState({})
-   
+  const [details, setDetails] = useState({});
+
   useEffect(() => {
     const a = async () => {
       let val = localStorage.getItem("userAuth");
@@ -28,14 +27,17 @@ const VendorPannel = ({url}) => {
     a();
   }, []);
   return (
-        <div className="col-4">
+    <div className="col-4" style={{ marginLeft: "-50px" }}>
       <div
         class="card "
         style={{ width: "100%", display: "flex", alignItems: "center" }}
       >
         <img
           className="card-img-top"
-          src={details.photo || "https://glplaw.com/wp-content/uploads/2021/03/4.png"}
+          src={
+            details.photo ||
+            "https://glplaw.com/wp-content/uploads/2021/03/4.png"
+          }
           alt="Card image cap"
           style={{ width: "100px", height: "100px" }}
         />
@@ -50,7 +52,11 @@ const VendorPannel = ({url}) => {
           </h4>
           <h6
             className="card-title"
-            style={{ textAlign: "center", width: "100%" ,textTransform:"capitalize"}}
+            style={{
+              textAlign: "center",
+              width: "100%",
+              textTransform: "capitalize",
+            }}
           >
             {details.name}
           </h6>
@@ -82,18 +88,17 @@ const VendorPannel = ({url}) => {
           >
             Add Products
           </button>
-        <Link to="/vendor-dashboard/vendor-product">
-          <button
-            type="button"
-            class="btn btn-outline-dark"
-            style={{ width: "20rem" }}
-          >
-            My Products
-          </button>
+          <Link to="/vendor-dashboard/vendor-product">
+            <button
+              type="button"
+              class="btn btn-outline-dark"
+              style={{ width: "20rem" }}
+            >
+              My Products
+            </button>
+          </Link>
         </Link>
-        </Link>
-       
-   
+
         <Link to="/vendor-dashboard/update-profile">
           <button
             type="button"

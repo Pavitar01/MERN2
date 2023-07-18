@@ -291,3 +291,10 @@ body {
     font-size: 25px;
     margin-right: 10px;
   }
+
+
+  .logoimg{
+    background-image: url('https://alexharkness.com/wp-content/uploads/2020/06/logo-2.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+  }

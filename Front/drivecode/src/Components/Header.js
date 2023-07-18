@@ -40,7 +40,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
     };
 
     a();
-  }, []);
+  }, [cart]);
 
 
   useEffect(() => {

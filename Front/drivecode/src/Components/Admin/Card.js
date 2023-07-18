@@ -27,6 +27,82 @@ const Cards = ({
   const [outStock, setOutStock] = useState(outstock);
   const [updatedImages, setUpdatedImages] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const showModal1 = () => {
+    setIsModalOpen1(true);
+  };
+
+  const image_to_base64 = (imageFile) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(imageFile);
+    });
+  };
+
+  const handlePhotoUpload = (e) => {
+    const fileArray = Array.from(e.target.files).map((file) => ({
+      src: URL.createObjectURL(file),
+      alt: file.name,
+      file, // Store the File object for later use.
+    }));
+    setUpdatedImages(fileArray);
+  };
+
+  const handleOk1 = async () => {
+    setConfirmLoading(true);
+
+    // Created a new array with the updated images and the current images.
+    const mergedImages = [...updatedImages, ...currentImages];
+
+    const photoBase64Array = await Promise.all(
+      mergedImages.map(async (photo) => {
+        if (photo.file) {
+          try {
+            const imageFile = await fetch(photo.src).then((response) =>
+              response.blob()
+            );
+            const photoBase64 = await image_to_base64(imageFile);
+            return photoBase64;
+          } catch (error) {
+            console.log("Error converting image to Base64:", error);
+          }
+        } else {
+          return photo.src;
+        }
+      })
+    );
+    try {
+      const data = await axios.put(
+        `http://localhost:8000/api/product/update-photo/${pid}`,
+        {
+          images: photoBase64Array,
+        }
+      );
+      if (data.data.success) {
+        messageApi.open({
+          type: "success",
+          content: `${data.data.message}`,
+        });
+      } else {
+        messageApi.open({
+          type: "warning",
+          content: `${data.data.message}`,
+        });
+      }
+    } catch (error) {
+      messageApi.open({
+        type: "warning",
+      });
+    }
+    setCurrentImages([]);
+  };
+  const handleCancel1 = () => {
+    setIsModalOpen1(false);
+  };
 
   useEffect(() => {
     setCurrentImages(image);
@@ -43,7 +119,7 @@ const Cards = ({
   const handleChange = (value) => {
     setNewStatus(value);
   };
-  const handleStockChange = async(value) => {
+  const handleStockChange = async (value) => {
     const data = await axios.post(
       "http://localhost:8000/api/product/stock-handler",
       { id: pid, value }
@@ -85,50 +161,7 @@ const Cards = ({
     }
   };
 
-  const image_to_base64 = (imageFile) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(imageFile);
-    });
-  };
-
-  const handlePhotoUpload = (e) => {
-    const fileArray = Array.from(e.target.files).map((file) => ({
-      src: URL.createObjectURL(file),
-      alt: file.name,
-      file, // Store the File object for later use.
-    }));
-    setUpdatedImages(fileArray);
-  };
-
   const handleOk = async () => {
-    setConfirmLoading(true);
-
-    // Create a new array with the updated images and the current images.
-    const mergedImages = [...updatedImages, ...currentImages];
-
-    const photoBase64Array = await Promise.all(
-      mergedImages.map(async (photo) => {
-        if (photo.file) {
-          try {
-            const imageFile = await fetch(photo.src).then((response) =>
-              response.blob()
-            );
-            const photoBase64 = await image_to_base64(imageFile);
-            return photoBase64;
-          } catch (error) {
-            console.log("Error converting image to Base64:", error);
-          }
-        } else {
-          // If the photo is not a File object, it's already a Base64 string.
-          return photo.src;
-        }
-      })
-    );
     try {
       const data = await axios.put(
         `http://localhost:8000/api/product/update-product/${pid}`,
@@ -139,7 +172,6 @@ const Cards = ({
           price: newPrice,
           status: newStatus,
           category: category,
-          images: photoBase64Array,
         }
       );
       if (data.data.success) {
@@ -158,13 +190,9 @@ const Cards = ({
         type: "warning",
       });
     }
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+    setOpen(false);
   };
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
   return (
@@ -197,7 +225,6 @@ const Cards = ({
       <Tag color="blue" style={{ fontSize: "10px", marginTop: "5px" }}>
         status: {status}
       </Tag>
-
       <p style={{ fontSize: "20px" }}>
         <i
           class="fa-sharp fa-solid fa-pen-to-square"
@@ -239,7 +266,7 @@ const Cards = ({
               type="number"
               className="form-control"
               id="exampleFormControlInput1"
-              value={newPrice}
+              value={newQuantity}
               onChange={(e) => {
                 setNewQuantity(e.target.value);
               }}
@@ -269,20 +296,7 @@ const Cards = ({
               />
             ))}
           </div>
-          <div style={{ display: "flex" }}>
-            <input
-              onChange={handlePhotoUpload}
-              type="file"
-              multiple
-              className="form-control-file"
-              id="productImages"
-              style={{
-                border: "none",
-                height: "50px",
-                border: "1px solid gray",
-              }}
-            />
-          </div>
+
           <Select
             defaultValue="Select a value"
             value={newStatus}
@@ -303,7 +317,7 @@ const Cards = ({
           />
         </Modal>
         <Select
-          defaultValue={outStock===1?"Out of Stock":"Have Stocks"}
+          defaultValue={outStock === 1 ? "Out of Stock" : "Have Stocks"}
           value={outStock}
           onChange={handleStockChange}
           style={{
@@ -325,6 +339,30 @@ const Cards = ({
           style={{ float: "right" }}
           onClick={success}
         ></i>
+        <Button type="primary" onClick={showModal1} danger>
+          Change Image
+        </Button>
+        <Modal
+          title="Change Image"
+          open={isModalOpen1}
+          onOk={handleOk1}
+          onCancel={handleCancel1}
+        >
+          <div style={{ display: "flex" }}>
+            <input
+              onChange={handlePhotoUpload}
+              type="file"
+              multiple
+              className="form-control-file"
+              id="productImages"
+              style={{
+                border: "none",
+                height: "50px",
+                border: "1px solid gray",
+              }}
+            />
+          </div>
+        </Modal>
       </p>
     </Card>
   );

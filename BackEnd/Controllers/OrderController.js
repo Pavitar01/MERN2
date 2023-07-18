@@ -4,42 +4,37 @@ const { Product } = require("../Models/ProductModel");
 
 const createOrder = async (req, res) => {
   try {
-    const cartId = req.body.id;
-    const cart = await Cart.findOne({ _id: cartId });
+    const { id, totalBill } = req.body; // Added totalBill parameter
+
+    const cart = await Cart.findOne({ _id: id });
 
     if (!cart) {
       return res.status(404).json({ error: "Cart not found" });
     }
 
-    const { userId, items, bill } = cart;
-    
+    const { userId, items } = cart;
+
     const newOrder = new Order({
       userId,
       items,
-      bill,
+      bill: totalBill, 
     });
 
-    // Save the new order to the database
     const savedOrder = await newOrder.save();
-
-    // Remove the cart or mark it as completed, depending on your application logic
-    // For example:
-    await Cart.findByIdAndRemove(cartId);
-
-    // Respond with the created order
+    await Cart.findByIdAndRemove(id);
     res.status(201).send({
       success: true,
       message: "Order Success",
       savedOrder,
     });
   } catch (err) {
-    console.error(err);
     res.status(500).send({
       succes: false,
       message: "Internal Server Error",
     });
   }
 };
+
 
 const getAllOrder = async (req, res) => {
   try {

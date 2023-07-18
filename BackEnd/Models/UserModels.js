@@ -41,7 +41,6 @@ const userSchema = new mongoose.Schema(
     },
     ans: {
       default:"123",
-
       type: String,
     },
     address: {
@@ -55,7 +54,11 @@ const userSchema = new mongoose.Schema(
     photo:{
       type:String,
       default:null
-    }
+    },
+    logo:{
+      type:String,
+      default:null
+    },
   },
   { timestamps: true }
 );
