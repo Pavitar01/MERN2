@@ -22,11 +22,11 @@ const Allcategories = () => {
   const [newPrice, setNewPrice] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
   const [cartItems, setCartItems] = useState([]);
-
+  const [outStocks, setOutStocks] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const [options, setOptions] = useState("");
-const [num,setNum]=useState(0)
+  const [num, setNum] = useState(0);
   // Function is called every time the increment button is clicked
   const handleClick1 = () => {
     // Counter state is incremented
@@ -69,7 +69,7 @@ const [num,setNum]=useState(0)
       }
     };
     fetchData();
-  }, [options, searchString,num]);
+  }, [options, searchString, num]);
 
   let val = localStorage.getItem("userAuth");
   val = JSON.parse(val);
@@ -123,7 +123,7 @@ const [num,setNum]=useState(0)
       quantity: parseInt(newQuantity),
     });
     navigate("/");
-  setNum(num+1)
+    setNum(num + 1);
     setIsModalOpen(false);
   };
 
@@ -143,6 +143,11 @@ const [num,setNum]=useState(0)
     return cartItems.some((item) => item.productId === productId);
   };
 
+  const isOutStock = (outstock) => {
+    return outstock === 1;
+  };
+
+  console.log(isOutStock);
   return (
     <>
       <Middle
@@ -151,9 +156,9 @@ const [num,setNum]=useState(0)
       >
         <div className="container-fluid" style={{ display: "flex" }}>
           <SideMenu setOption={setOptions} />
-          <div className="col-10" style={{ display:"flex",gap:"10px" }}>
-            <div style={{ width: "75%", height:"auto", }}>
-              <Carousel autoplay style={{ width: "100%", }}>
+          <div className="col-10" style={{ display: "flex", gap: "10px" }}>
+            <div style={{ width: "75%", height: "auto" }}>
+              <Carousel autoplay style={{ width: "100%" }}>
                 <div>
                   <img
                     src="https://i.pinimg.com/originals/02/cf/cf/02cfcffac595c832c514d58704cd82ce.jpg"
@@ -163,21 +168,21 @@ const [num,setNum]=useState(0)
                 </div>
                 <div>
                   <img
-                    src="https://th.bing.com/th/id/OIP._M1llvKmA14pBnR2I0PzQgHaE_?pid=ImgDet&rs=1"
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-                <div>
-                  <img
-                    src="https://i.pinimg.com/originals/ce/99/0c/ce990c0668729dc4bafeb093ecb964dc.jpg"
-                    width="100%"
-                    height="100%"
-                  />
-                </div>
-                <div>
-                  <img
                     src="https://th.bing.com/th/id/R.d1ed34ac8f711d6d807bacb7f217852c?rik=D3hF6b%2bxzryonA&riu=http%3a%2f%2fgraphicgoogle.com%2fwp-content%2fuploads%2f2017%2f10%2fFacebook-Fashion-Big-Sale-Banner.jpg&ehk=xAR7O2yBftDuPOZZ2li0TEjvnMDEw2%2fuJhTgzEniJoc%3d&risl=&pid=ImgRaw&r=0"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="https://assetscdn1.paytm.com/images/catalog/view_item/787364/1617369686163.jpg?imwidth=480&impolicy=hq"
+                    width="100%"
+                    height="100%"
+                  />
+                </div>
+                <div>
+                  <img
+                    src="https://3.bp.blogspot.com/-AcY0y1_2Tj0/X1gCorMCBxI/AAAAAAAAAGc/pf2-mG0D7902_PaukCkGuu2gCO9UgJDWQCK4BGAYYCw/s1600/banner2.jpg"
                     width="100%"
                     height="100%"
                   />
@@ -224,6 +229,7 @@ const [num,setNum]=useState(0)
           prod.map((product, index) => {
             if (product?.Addedby !== value && product?.status === 0) {
               const addedToCart = isAddedToCart(product._id);
+              const OutofStock = isOutStock(product.outStock);
 
               return (
                 <Card
@@ -240,7 +246,10 @@ const [num,setNum]=useState(0)
                       {product.image.map((i, index) => {
                         return (
                           <div key={index}>
-                            <img src={i} style={{ width: "300px",height:"250px" }} />
+                            <img
+                              src={i}
+                              style={{ width: "300px", height: "250px" }}
+                            />
                           </div>
                         );
                       })}
@@ -273,10 +282,12 @@ const [num,setNum]=useState(0)
                           textTransform: "capitalize",
                         }}
                         onClick={() => showModal(product)}
-                        disabled={!auth.user || addedToCart}
+                        disabled={!auth.user || addedToCart || OutofStock}
                       >
                         {!auth?.user
                           ? "Login First"
+                          : OutofStock
+                          ? "Out of Stocks"
                           : addedToCart
                           ? "Added to Cart"
                           : "Add To Cart"}

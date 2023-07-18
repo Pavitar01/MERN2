@@ -123,7 +123,6 @@ const deleteProductController = async (req, res) => {
   }
 };
 
-
 //update product
 
 const updateProductController = async (req, res) => {
@@ -142,12 +141,10 @@ const updateProductController = async (req, res) => {
       return res.status(422).json({ message: "description is required" });
     }
 
-
-
     if (!quantity) {
       return res.status(422).json({ message: "Quantity is required" });
     }
-    if (images===null) {
+    if (images === null) {
       return res.status(422).json({ message: "Images is required" });
     }
 
@@ -276,6 +273,30 @@ const getVendorById = async (req, res) => {
   }
 };
 
+const stockHandleController = async (req, res) => {
+  const { id, value } = req.body;
+
+  try {
+    await Product.findOne({ _id: id }).then((product) => {
+      product.outStock = value;
+
+      return product.save();
+    }).catch((err)=>{
+      console.log("Errrrr : ", err);  
+    })
+    res.status(200).send({
+      message: "Stocks Status updated successfully !",
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Error in updating Status",
+      error,
+    });
+  }
+};
+
 module.exports = {
   createProdutController,
   getProductController,
@@ -288,4 +309,5 @@ module.exports = {
   getVendorProductsController,
   getProductByCatController,
   getVendorById,
+  stockHandleController,
 };

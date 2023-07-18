@@ -11,7 +11,8 @@ const {
   updateVendorController,
   getVendorProductsController,
   getProductByCatController,
-  getVendorById
+  getVendorById,
+  stockHandleController
 } = require("../Controllers/ProductController");
 const productRouter = express.Router();
 const multer = require("multer");
@@ -54,6 +55,7 @@ productRouter.put("/vender-status", updateVendorController);
 productRouter.post("/get-product-vendor", getVendorProductsController);
 productRouter.post("/get-product-by-category", getProductByCatController);
 productRouter.post("/get-vendor-by-id", getVendorById);
+productRouter.post("/stock-handler", stockHandleController);
 productRouter.put(
   "/update-product/:pid",
   // isSignIn,

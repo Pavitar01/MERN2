@@ -51,6 +51,7 @@ const BestSeller = () => {
     fetchData();
   }, []);
 
+
   // Modal
 
   const showModal = (product) => {
@@ -104,6 +105,7 @@ const BestSeller = () => {
           >
             {prod.length !== 0 ? (
               prod.map((i, index) => {
+
                 if (i.status !== 1) {
                   return (
                     <Card
@@ -188,7 +190,7 @@ const BestSeller = () => {
                   justifyContent: "center",
                 }}
               >
-                 <Spin size="large" />
+                <Spin size="large" />
               </div>
             )}
             <Modal

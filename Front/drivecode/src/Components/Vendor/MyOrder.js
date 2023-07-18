@@ -81,7 +81,6 @@ const MyOrder = () => {
                   <th scope="col">Quantity</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
-                
                 </tr>
               </thead>
               <tbody>
@@ -93,7 +92,7 @@ const MyOrder = () => {
                       <td>{item.price}</td>
                       <td>{item.quantity}</td>
                       <td>
-                      {item.status === 0
+                        {item.status === 0
                           ? "Cancelled"
                           : item.status === 1
                           ? "Processing"
@@ -105,16 +104,17 @@ const MyOrder = () => {
                           ? "Shipped"
                           : item.status === 5
                           ? "on the way"
-                          : item.status === 6
-                          && "Active"
-                          }
+                          : item.status === 6 && "Active"}
                       </td>
                       <td>
                         <Button
                           type="primary"
                           danger
-                          disabled={isCancelButtonDisabled || item.status===0 || item.status===2}
-                          
+                          disabled={
+                            isCancelButtonDisabled ||
+                            item.status === 0 ||
+                            item.status === 2
+                          }
                           onClick={() => handleCancel(orderIndex, itemIndex)}
                         >
                           Cancel

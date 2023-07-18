@@ -23,22 +23,26 @@ const productSchema = new mongoose.Schema(
       type: Number,
       // required: true,
     },
-    
+
     orders: {
       type: Number,
       default: 0,
     },
     image: {
-      type: [String]
+      type: [String],
     },
     Addedby: {
       type: String,
-      default:"Admin"
+      default: "Admin",
     },
-    status:{
-      type : Number ,
-      default : 0
-    }
+    status: {
+      type: Number,
+      default: 0,
+    },
+    outStock: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

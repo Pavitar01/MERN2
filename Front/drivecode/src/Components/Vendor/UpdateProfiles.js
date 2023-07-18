@@ -23,7 +23,7 @@ const UpdateProfiles = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
-  const [val,setVal]=useState(0)
+  const [val, setVal] = useState(0);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -39,12 +39,9 @@ const UpdateProfiles = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.post(
-        "http://localhost:8000/api/auth/all-user",
-        {
-          email: auth?.user?.email,
-        }
-      );
+      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
+        email: auth?.user?.email,
+      });
       setData(data.data);
     };
     fetchData();
@@ -72,7 +69,7 @@ const UpdateProfiles = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleSubmit = async (e) => {
-    setVal(val+1)
+    setVal(val + 1);
     e.preventDefault();
 
     if (!formData.name || !formData.address) {
@@ -125,7 +122,7 @@ const UpdateProfiles = () => {
 
       <div className="container">
         <div className="row  mt-5">
-          <VendorPannel url={all.photo}/>
+          <VendorPannel url={all.photo} />
           <div className="col-8">
             <h1>Update Your Profile</h1>
             <form onSubmit={handleSubmit}>
@@ -202,26 +199,10 @@ const UpdateProfiles = () => {
                 setPass
               </Button>
 
-              <Modal
-                title="Basic Modal"
-                visible={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-              >
-                <input
-                  type="text"
-                  name="password"
-                  placeholder="At least 6 characters"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                />
-              </Modal>
-
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer" }}
+                style={{ marginBottom: "20px", cursor: "pointer",height:"50%",marginTop:"10px" }}
               />
             </form>
           </div>

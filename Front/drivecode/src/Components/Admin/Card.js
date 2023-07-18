@@ -13,6 +13,7 @@ const Cards = ({
   orders,
   status,
   newstatus,
+  outstock,
   image,
 }) => {
   const [open, setOpen] = useState(false);
@@ -23,7 +24,10 @@ const Cards = ({
   const [newPrice, setNewPrice] = useState(price);
   const [newQuantity, setNewQuantity] = useState(quantity);
   const [currentImages, setCurrentImages] = useState(image);
+  const [outStock, setOutStock] = useState(outstock);
   const [updatedImages, setUpdatedImages] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
+
   useEffect(() => {
     setCurrentImages(image);
   }, [image]);
@@ -39,7 +43,23 @@ const Cards = ({
   const handleChange = (value) => {
     setNewStatus(value);
   };
-  const [messageApi, contextHolder] = message.useMessage();
+  const handleStockChange = async(value) => {
+    const data = await axios.post(
+      "http://localhost:8000/api/product/stock-handler",
+      { id: pid, value }
+    );
+    if (data.data.success) {
+      messageApi.open({
+        type: "success",
+        content: `${data.data.message}`,
+      });
+    } else {
+      messageApi.open({
+        type: "warning",
+        content: `${data.data.message}`,
+      });
+    }
+  };
   const success = async () => {
     try {
       const data = await axios.post(
@@ -282,6 +302,24 @@ const Cards = ({
             ]}
           />
         </Modal>
+        <Select
+          defaultValue={outStock===1?"Out of Stock":"Have Stocks"}
+          value={outStock}
+          onChange={handleStockChange}
+          style={{
+            width: 120,
+          }}
+          options={[
+            {
+              value: 1,
+              label: "Out of Stocks",
+            },
+            {
+              value: 0,
+              label: "Have Stocks",
+            },
+          ]}
+        />
         <i
           class="fa-sharp fa-solid fa-trash"
           style={{ float: "right" }}

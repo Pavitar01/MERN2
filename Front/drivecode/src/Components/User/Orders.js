@@ -7,7 +7,6 @@ import { message } from "antd";
 
 const Orders = () => {
   const [messageApi, contextHolder] = message.useMessage();
-
   const [isCancelButtonDisabled, setIsCancelButtonDisabled] = useState(false);
   const [order, setOrder] = useState([]);
 
@@ -66,7 +65,6 @@ const Orders = () => {
   return (
     <Middle>
       {contextHolder}
-
       <div className="container">
         <div className="row mt-5">
           <UserPannel />
@@ -81,7 +79,6 @@ const Orders = () => {
                   <th scope="col">Quantity</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
-                
                 </tr>
               </thead>
               <tbody>
@@ -93,7 +90,7 @@ const Orders = () => {
                       <td>{item.price}</td>
                       <td>{item.quantity}</td>
                       <td>
-                      {item.status === 0
+                        {item.status === 0
                           ? "Cancelled"
                           : item.status === 1
                           ? "Processing"
@@ -105,16 +102,17 @@ const Orders = () => {
                           ? "Shipped"
                           : item.status === 5
                           ? "on the way"
-                          : item.status === 6
-                          && "Active"
-                          }
+                          : item.status === 6 && "Active"}
                       </td>
                       <td>
                         <Button
                           type="primary"
                           danger
-                          disabled={isCancelButtonDisabled || item.status===0 || item.status===2}
-                          
+                          disabled={
+                            isCancelButtonDisabled ||
+                            item.status === 0 ||
+                            item.status === 2
+                          }
                           onClick={() => handleCancel(orderIndex, itemIndex)}
                         >
                           Cancel

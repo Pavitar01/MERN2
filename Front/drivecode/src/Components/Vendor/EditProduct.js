@@ -49,7 +49,6 @@ const EditProduct = () => {
             >
               {prod.length !== 0 ? (
                 prod.map((i, index) => {
-
                   if (i.status !== 1) {
                     return (
                       <Card
@@ -65,7 +64,7 @@ const EditProduct = () => {
                         addedBy={i.Addedby}
                         newstatus={i.status}
                         status={i.status === 0 ? "Published" : "Draft"}
-
+                        outstock={i.outStock === 1 ? "Out of stock" : "Have Stock"}
                       />
                     );
                   }
@@ -75,16 +74,20 @@ const EditProduct = () => {
                   direction="vertical"
                   style={{
                     width: "50%",
-                    display:"flex",
-                    justifyContent:"center",
-                    height:"100%"
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "100%",
                   }}
                 >
-                 <Space direction="vertical">
-                 <Spin tip="Fetching published your products" size="large" style={{width:"300px"}}>
-                    <div className="content" />
-                  </Spin>
-                 </Space>
+                  <Space direction="vertical">
+                    <Spin
+                      tip="Fetching published your products"
+                      size="large"
+                      style={{ width: "300px" }}
+                    >
+                      <div className="content" />
+                    </Spin>
+                  </Space>
                 </Space>
               )}
             </div>

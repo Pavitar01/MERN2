@@ -14,6 +14,7 @@ import {
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Meta from "antd/es/card/Meta";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -21,11 +22,45 @@ const Cart = () => {
   const [dis, setDis] = useState(0);
   const [counter, setCounter] = useState(1);
   const [val, setVal] = useState(0);
+  const [Details, setDetails] = useState();
   const [messageApi, contextHolder] = message.useMessage();
   const handleChange = (value) => {
     setDis(value);
   };
   const navigate = useNavigate();
+
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+
+  const showModal1 = () => {
+    setIsModalOpen1(true);
+  };
+  const handleOk1 = async () => {
+    messageApi.open({
+      type: "success",
+      content: "Address is already saved with us!",
+    });
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/order/orders`,
+        { id: cart2._id }
+      );
+
+      if (response.data.success) {
+        setCart([]);
+        messageApi.open({
+          type: "success",
+          content: "Order has been placed successfully! Check your Orders",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsModalOpen1(false);
+  };
+  const handleCancel1 = () => {
+    setIsModalOpen1(false);
+  };
 
   const handleClick2 = async () => {
     let val = localStorage.getItem("userAuth");
@@ -76,7 +111,7 @@ const Cart = () => {
         `http://localhost:8000/api/cart-item/cart/${val.user.id}/${productId}`
       );
       if (response.data.success) {
-      messageApi.success("Item Deleted")
+        messageApi.success("Item Deleted");
         setCart(response.data.cart.items);
       } else {
         messageApi.error("Failed in deleting!");
@@ -116,10 +151,21 @@ const Cart = () => {
     setOpen(newOpen);
   };
 
+  useEffect(() => {
+    let val = localStorage.getItem("userAuth");
+    val = JSON.parse(val);
+    const fetchData = async () => {
+      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
+        email: val?.user?.email,
+      });
+      setDetails(data.data);
+    };
+    fetchData();
+  }, []);
   const placeOrder = async () => {
     let val = localStorage.getItem("userAuth");
     val = JSON.parse(val);
-    const address = val?.user?.address;
+    const address = val.user.address;
     if (cart?.length === 0) {
       messageApi.open({
         type: "error",
@@ -132,26 +178,7 @@ const Cart = () => {
       });
       navigate("/user/profile");
     } else {
-      messageApi.open({
-        type: "success",
-        content: "Address is already saved with us!",
-      });
-      try {
-        const response = await axios.post(
-          `http://localhost:8000/api/order/orders`,
-          { id: cart2._id }
-        );
-
-        if (response.data.success) {
-          setCart([]);
-          messageApi.open({
-            type: "success",
-            content: "Order has been placed successfully! Check your Orders",
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      showModal1();
     }
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -228,16 +255,15 @@ const Cart = () => {
                     </Card>
 
                     <div>
-                  
-                        <Button
-                          type="primary"
-                          danger
-                          onClick={()=>   handleDelete(item.productId)}
-                          style={{ float: "right" }}
-                        >
-                          <i className="fa-sharp fa-solid fa-trash"></i>
-                        </Button>
-                   
+                      <Button
+                        type="primary"
+                        danger
+                        onClick={() => handleDelete(item.productId)}
+                        style={{ float: "right" }}
+                      >
+                        <i className="fa-sharp fa-solid fa-trash"></i>
+                      </Button>
+
                       <div
                         style={{
                           display: "flex",
@@ -265,10 +291,16 @@ const Cart = () => {
                             onCancel={handleEditCancel}
                           >
                             <Carousel autoplay>
-                              {item.image.map((i, index) => {
+                              {editedItem?.image?.map((i, index) => {
                                 return (
                                   <div key={index}>
-                                    <img src={i} style={{ width: "300px",marginLeft:"80px" }} />
+                                    <img
+                                      src={i}
+                                      style={{
+                                        width: "300px",
+                                        marginLeft: "80px",
+                                      }}
+                                    />
                                   </div>
                                 );
                               })}
@@ -323,35 +355,59 @@ const Cart = () => {
             </div>
             <hr style={{ border: "1px solid black" }} />
 
-            <Popover
-              content={
-                <>
-                  <Button onClick={placeOrder} style={{ cursor: "pointer",borderRadius:"0",margin:"1px" }} type="primary">
-                    Buy
-                  </Button>
-                  <Button
-                  type="primary"
-                    onClick={() => navigate("/user/profile")}
-                    style={{ cursor: "pointer",borderRadius:"0" ,margin:"1px" }}
-                  >
-                    Change Address
-                  </Button>
-                </>
-              }
-              title="Confirm"
-              trigger="click"
-              open={open}
-              onOpenChange={handleOpenChange}
+            <Button
+              type="primary"
+              size="large"
+              style={{ float: "right" }}
+              danger
+              onClick={placeOrder}
             >
-              <Button
-                type="primary"
-                size="large"
-                style={{ float: "right" }}
-                danger
+              Place Order
+            </Button>
+            <Modal
+              title="Place order"
+              open={isModalOpen1}
+              onOk={handleOk1}
+              onCancel={handleCancel1}
+              width={800}
+              footer={[
+                <Button
+                  key="back"
+                  onClick={() => {
+                    navigate("/user/profile");
+                  }}
+                >
+                  Change Address
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleOk1}>
+                  Buy
+                </Button>,
+              ]}
+            >
+              <Card
+                hoverable
+                style={{ width: 600,marginLeft:"10%" }}
+                cover={
+                  <img
+                    alt="example"
+                    src="https://media.tenor.com/WYKoRh1NGPEAAAAd/truck-delivery.gif"
+                  />
+                }
               >
-                Place Order
-              </Button>
-            </Popover>
+                <p>
+                  <span style={{ float: "left", fontWeight: "600" }}>
+                    Delivered Address
+                  </span>{" "}
+                  <span style={{ float: "right" }}>{Details?.name}</span>
+                </p>
+                <p>
+                  <span style={{ float: "left", fontWeight: "600" }}>
+                    Delivered To
+                  </span>
+                  <span style={{ float: "right" }}>{Details?.address}</span>
+                </p>
+              </Card>
+            </Modal>
           </div>
           <div className="col-4">
             <div
@@ -416,7 +472,9 @@ const Cart = () => {
                       ]}
                     />
                   ) : (
-                    <Tag color="#108ee9">Add Product to unlock coupons</Tag>
+                    <Tag color="#108ee9">
+                      Add above &#8377;&nbsp;500 to unlock coupons
+                    </Tag>
                   )}
                 </span>
               </p>
