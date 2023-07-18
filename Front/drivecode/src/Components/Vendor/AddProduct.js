@@ -18,7 +18,6 @@ const AddProducts = () => {
   const [Err, setErr] = useState("");
   const [auth] = useAuth();
   const [photos, setPhotos] = useState([]);
-  const [files, setFiles] = useState([])
 
   const [details, setDetails] = useState([]);
 
@@ -134,12 +133,14 @@ const AddProducts = () => {
         {
           name,
           images: photoBase64Array,
+
           des,
           price,
           status: 1,
           quantity,
           category,
           Addedby: val.user.id,
+
           order: 0,
         }
       );
@@ -255,7 +256,7 @@ const AddProducts = () => {
                 </div>
                 <div style={{ display: "flex" }}>
                   <input
-                    onChange={(handlePhotoUpload)}
+                    onChange={handlePhotoUpload}
                     type="file"
                     multiple
                     className="form-control-file"
