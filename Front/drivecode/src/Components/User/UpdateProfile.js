@@ -21,18 +21,8 @@ const UpdateProfiles = () => {
   const [auth, setAuth] = useAuth();
   const [all, setData] = useState("");
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   useEffect(() => {
     const fetchData = async () => {
       const data = await axios.post("http://localhost:8000/api/auth/all-user", {

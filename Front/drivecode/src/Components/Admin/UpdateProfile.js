@@ -21,19 +21,7 @@ const UpdateProfile = () => {
   const [auth, setAuth] = useAuth();
   const [data1, setData] = useState("");
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [val, setVal] = useState(0);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   useEffect(() => {
     const fetchData = async () => {

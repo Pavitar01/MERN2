@@ -318,8 +318,21 @@ const Allcategories = () => {
         <Modal
           title={`Product Id: ${mod._id}`}
           visible={isModalOpen}
+          
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel} type="primary" danger>
+              Back 
+            </Button>,
+            <Button
+            type="primary"
+              key="submit"
+              onClick={handleOk}
+            >
+              Add To cart
+            </Button>,
+          ]}
         >
           <Carousel autoplay>
             {mod.image && mod.image.length > 0 ? (
