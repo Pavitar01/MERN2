@@ -29,7 +29,7 @@ const EditProducts = () => {
         <div className="row  mt-5">
           <AdminPannel />
           <div className="col-8">
-            <h1>Publised Product</h1>
+            <h1>All Products</h1>
             <div
               className="scrollBar"
               style={{

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Card, Modal, Carousel, Input, Spin, Space } from "antd";
+import {
+  Button,
+  Card,
+  Modal,
+  Carousel,
+  Input,
+  Spin,
+  Space,
+  message,
+} from "antd";
 import Meta from "antd/es/card/Meta";
 import { useAuth } from "../../Auth/Index";
 import Footer from "../Footer";
@@ -8,8 +17,6 @@ import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
 import { useNavigate } from "react-router-dom";
 import banner from "../../Newfolder/banner.jpg";
-import { useSelector, useDispatch } from "react-redux";
-import { setProducts } from "../../Redux/Slice";
 
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
@@ -23,14 +30,11 @@ const Allcategories = () => {
   const [newPrice, setNewPrice] = useState("");
   const [newQuantity, setNewQuantity] = useState("");
   const [cartItems, setCartItems] = useState([]);
-  const [outStocks, setOutStocks] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const [options, setOptions] = useState("");
   const [num, setNum] = useState(0);
-
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.products.products);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const user = {
     _id: 12345678,
@@ -55,14 +59,14 @@ const Allcategories = () => {
               product.name.toLowerCase().includes(searchString.toLowerCase())
             );
           }
-          dispatch(setProducts(filteredProducts)); 
+          setProd(filteredProducts);
         }
       } catch (error) {
         console.log(error);
       }
     };
     fetchData();
-  }, [options, searchString, num, dispatch]);
+  }, [options, searchString, num]);
 
   let val = localStorage.getItem("userAuth");
   val = JSON.parse(val);
@@ -118,6 +122,8 @@ const Allcategories = () => {
     navigate("/");
     setNum(num + 1);
     setIsModalOpen(false);
+    messageApi.success("Product Added");
+    messageApi.info("Please Refresh ...");
   };
 
   const handleCancel = () => {
@@ -140,13 +146,14 @@ const Allcategories = () => {
     return outstock === 1;
   };
 
-  console.log(isOutStock);
   return (
     <>
       <Middle
         handleSearchString={handleSearchString}
         searchString={searchString}
       >
+        {contextHolder}
+
         <div className="container-fluid" style={{ display: "flex" }}>
           <SideMenu setOption={setOptions} />
           <div className="col-10" style={{ display: "flex", gap: "10px" }}>
@@ -269,7 +276,6 @@ const Allcategories = () => {
                     >
                       <Button
                         type="primary"
-                        className="fa-solid fa-cart-arrow-down"
                         style={{
                           fontSize: "15px",
                           textTransform: "capitalize",
@@ -280,10 +286,10 @@ const Allcategories = () => {
                         {!auth?.user
                           ? "Login First"
                           : OutofStock
-                          ? "Out of Stocks"
+                          ? "Out Of Stocks"
                           : addedToCart
-                          ? "Added to Cart"
-                          : "Add To Cart"}
+                          ? "Added To Cart"
+                          : "View Product"}
                       </Button>
                     </span>
                   </p>

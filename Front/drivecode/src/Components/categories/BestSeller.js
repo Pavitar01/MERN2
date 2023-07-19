@@ -86,7 +86,6 @@ const BestSeller = () => {
             BEST SELLING PRODUCTS
           </h1>
           <p>
-            {" "}
             ( Product have more than five sales )
             <br />
             -- Many times Added to cart items --

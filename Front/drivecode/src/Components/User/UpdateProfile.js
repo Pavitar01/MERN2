@@ -35,12 +35,9 @@ const UpdateProfiles = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.post(
-        "http://localhost:8000/api/auth/all-user",
-        {
-          email: auth?.user?.email,
-        }
-      );
+      const data = await axios.post("http://localhost:8000/api/auth/all-user", {
+        email: auth?.user?.email,
+      });
       setData(data.data);
     };
     fetchData();
@@ -56,7 +53,6 @@ const UpdateProfiles = () => {
     ans: "",
     photo: null,
   });
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +76,7 @@ const UpdateProfiles = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.address) {
+    if (!formData.name.trim() || !formData.address.trim()) {
       messageApi.open({
         type: "warning",
         content: "Please fill in all fields!",
@@ -103,9 +99,9 @@ const UpdateProfiles = () => {
         {
           curreemail: auth?.user?.email,
           email: formData.email,
-          name: formData.name,
+          name: formData.name.trim(),
           phone: formData.phoneNumber,
-          address: formData.address,
+          address: formData.address.trim(),
           photo: photoBase64,
         }
       );
@@ -130,7 +126,7 @@ const UpdateProfiles = () => {
 
       <div className="container">
         <div className="row mt-5">
-          <UserPannel url={all?.photo }/>
+          <UserPannel url={all?.photo} />
           <div className="col-8">
             <h1>Update Your Profile</h1>
             <form onSubmit={handleSubmit}>
@@ -199,11 +195,16 @@ const UpdateProfiles = () => {
               >
                 setPass
               </Button>
-              
+
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer",marginTop:"10px",height:"50px" }}
+                style={{
+                  marginBottom: "20px",
+                  cursor: "pointer",
+                  marginTop: "10px",
+                  height: "50px",
+                }}
               />
             </form>
           </div>

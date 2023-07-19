@@ -11,6 +11,8 @@ import {
   message,
   Select,
   Carousel,
+  Space,
+  Spin,
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -27,12 +29,11 @@ const Cart = () => {
 
   const updateTotalBill = () => {
     // Calculate the total bill based on the cart items
-    const bill = cart.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-
-    setTotalBill(bill);
+    // const bill = cart.reduce(
+    //   (total, item) => total + item.price * item.quantity,
+    //   0
+    // );
+    // setTotalBill(bill);
   };
 
   const handleChange = (value) => {
@@ -48,28 +49,29 @@ const Cart = () => {
   const handleOk1 = async () => {
     let val = localStorage.getItem("userAuth");
     val = JSON.parse(val);
-    const address = val.user.address;
+    const address = Details.address;
     if (cart?.length === 0) {
       messageApi.open({
         type: "error",
         content: "Please Add Products",
       });
     } else if (address === "") {
-      messageApi.open({
-        type: "success",
-        content: "Your Order is With Us!",
-      });
-      {
-        Details.role === 0
-          ? navigate("/user/profile")
-          : navigate("/vendor-dashboard/update-profile");
-      }
-    } else {
-      const totalBill = cart.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      );
+      messageApi
+        .open({
+          type: "info",
+          content: "Your Order is With Us!, Now Please fill your Address",
+        })
 
+        .then(() => {
+          messageApi.open({
+            type: "info",
+            content: "Update Details",
+          });
+          Details.role === 0
+            ? navigate("/user/profile")
+            : navigate("/vendor-dashboard/update-profile");
+        });
+    } else {
       try {
         const response = await axios.post(
           "http://localhost:8000/api/order/orders",
@@ -144,6 +146,8 @@ const Cart = () => {
       );
       if (response.data.success) {
         messageApi.success("Item Deleted");
+        messageApi.info("Refresh For better performanance");
+
         setCart(response.data.cart.items);
       } else {
         messageApi.error("Failed in deleting!");
@@ -187,14 +191,13 @@ const Cart = () => {
     fetchData();
   }, []);
 
-  const placeOrder = async () => {};
-
-  useEffect(() => {
-    updateTotalBill();
-  }, [cart]);
+  // useEffect(() => {
+  //   updateTotalBill();
+  // }, [cart]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedItem, setEditedItem] = useState({});
+  const [bill, setBill] = useState(0);
 
   // setVal(editedItem.quantity)
 
@@ -381,7 +384,9 @@ const Cart = () => {
                     width={200}
                     height={200}
                   />
-                  <h1>Cart Is Empty</h1>
+                  <Space size="middle">
+                    <Spin size="large" />
+                  </Space>
                 </div>
               )}
             </div>
@@ -517,7 +522,8 @@ const Cart = () => {
                 <span style={{ float: "left" }}>Total Amount</span>
                 <span style={{ float: "right" }}>
                   &#8377;&nbsp;
-                  {totalBill - (totalBill * dis) / 100 || totalBill}
+                  {/* {totalBill - (totalBill * dis) / 100 || totalBill} */}
+                  {Number(cart2.bill) - (Number(cart2.bill) * 20) / 100 || ""}
                 </span>
               </h5>
             </div>

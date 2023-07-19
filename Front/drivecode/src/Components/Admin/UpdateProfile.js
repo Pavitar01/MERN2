@@ -73,7 +73,7 @@ const UpdateProfile = () => {
 
     e.preventDefault();
 
-    if (!formData.name || !formData.address) {
+    if (!formData.name.trim() || !formData.address.trim()) {
       messageApi.open({
         type: "warning",
         content: "Please fill in all fields!",
@@ -96,9 +96,9 @@ const UpdateProfile = () => {
         {
           curreemail: auth?.user?.email,
           email: auth.user.email,
-          name: formData.name,
+          name: formData.name.trim(),
           phone: auth.user.phone,
-          address: formData.address,
+          address: formData.address.trim(),
           photo: photoBase64,
         }
       );
@@ -201,12 +201,15 @@ const UpdateProfile = () => {
                 setPass
               </Button>
 
-          
-
               <input
                 type="submit"
                 value="Update Profile"
-                style={{ marginBottom: "20px", cursor: "pointer",height:"50px",marginTop:"10px" }}
+                style={{
+                  marginBottom: "20px",
+                  cursor: "pointer",
+                  height: "50px",
+                  marginTop: "10px",
+                }}
               />
             </form>
           </div>

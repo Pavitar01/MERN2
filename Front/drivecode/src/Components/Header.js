@@ -3,17 +3,20 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Auth/Index";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { Tag,Input } from "antd";
+import { Tag, Input } from "antd";
+import { message } from "antd";
 const { Search } = Input;
 
-const Header = ({prod, handleSearchString, searchString }) => {
+const Header = ({ prod, handleSearchString, searchString }) => {
   const [auth, setAuth] = useAuth();
-  const [cat, setCat] = useState([]);     
-  const [cart, setCart] = useState([]);     
-
-  const navigate = useNavigate();
-
+  const [cat, setCat] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [values, setVal] = useState(0);
+  const [messageApi, contextHolder] = message.useMessage();
   const handleLogout = () => {
+    setVal(values + 1);
+    messageApi.success("Log out successfully");
+    messageApi.info("Please Refresh for better Performance");
     setAuth({
       ...auth,
       user: null,
@@ -21,9 +24,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
     });
 
     localStorage.removeItem("userAuth");
-    toast.success("Logout Successfully !");
   };
-
 
   useEffect(() => {
     const a = async () => {
@@ -40,8 +41,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
     };
 
     a();
-  }, [cart]);
-
+  }, [cart, values]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -59,9 +59,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
     fetchCategories();
   }, [auth]);
 
-
-
-  const [Details,setDetails]=useState([])
+  const [Details, setDetails] = useState([]);
   useEffect(() => {
     let val = localStorage.getItem("userAuth");
     val = JSON.parse(val);
@@ -75,7 +73,8 @@ const Header = ({prod, handleSearchString, searchString }) => {
   }, []);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-light">
+    <nav className="navbar navbar-expand-lg bg-primary">
+      {contextHolder}
       <div className="container-fluid">
         <button
           className="navbar-toggler"
@@ -89,7 +88,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <Link className="navbar-brand" to="/">
+          <Link className="navbar-brand" to="/" style={{ color: "white" }}>
             <i className="fa-sharp fa-solid fa-cart-shopping"></i>Shopo.in
           </Link>
           <form
@@ -109,12 +108,18 @@ const Header = ({prod, handleSearchString, searchString }) => {
             ) : (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link" aria-current="page" to="/">
+                  <NavLink
+                    className="nav-link"
+                    aria-current="page"
+                    to="/"
+                    style={{ color: "white" }}
+                  >
                     Home
                   </NavLink>
                 </li>
                 <li className="nav-item">
                   <NavLink
+                    style={{ color: "white" }}
                     className="nav-link"
                     aria-current="page"
                     to="/policy"
@@ -124,6 +129,7 @@ const Header = ({prod, handleSearchString, searchString }) => {
                 </li>
                 <li>
                   <NavLink
+                    style={{ color: "white" }}
                     className="nav-link"
                     aria-current="page"
                     to="/best-seller"
@@ -136,13 +142,18 @@ const Header = ({prod, handleSearchString, searchString }) => {
 
             {!auth.user ? (
               <li className="nav-item">
-                <Link className="nav-link" to="/signin">
+                <Link
+                  className="nav-link"
+                  to="/signin"
+                  style={{ color: "white" }}
+                >
                   Login
                 </Link>
               </li>
             ) : (
               <li className="nav-item dropdown">
                 <Link
+                  style={{ color: "white" }}
                   className="nav-link dropdown-toggle"
                   id="navbarDropdownMenuLink"
                   data-toggle="dropdown"
@@ -183,11 +194,15 @@ const Header = ({prod, handleSearchString, searchString }) => {
                 <NavLink className="nav-link" to="/cart">
                   <i
                     className="fa-solid fa-cart-shopping"
-                    style={{ fontSize: "20px" }}
+                    style={{ fontSize: "20px", color: "white" }}
                   ></i>
                   <Tag
                     color="cyan"
-                    style={{ fontSize: "15px", marginTop: "-5px" }}
+                    style={{
+                      fontSize: "15px",
+                      marginTop: "-5px",
+                      marginLeft: "20px",
+                    }}
                   >
                     {cart?.length}
                   </Tag>
