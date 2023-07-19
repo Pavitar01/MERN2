@@ -301,7 +301,7 @@ const updatePhotoController = async (req, res) => {
     if (!product) {
       return res
         .status(404)
-        .json({ message: "Product not found", success: false });
+        .send({ message: "Product not found", success: false });
     }
     if (images && Array.isArray(images)) {
       product.image = images;

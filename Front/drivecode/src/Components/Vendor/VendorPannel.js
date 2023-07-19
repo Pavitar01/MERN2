@@ -94,7 +94,7 @@ const VendorPannel = ({ url }) => {
               class="btn btn-outline-dark"
               style={{ width: "20rem" }}
             >
-              My Products
+              All Products
             </button>
           </Link>
         </Link>
@@ -114,7 +114,7 @@ const VendorPannel = ({ url }) => {
             class="btn btn-outline-dark"
             style={{ width: "20rem" }}
           >
-            Orders
+            Total Orders
           </button>
         </Link>
         <Link to="/vendor-dashboard/my-order">
@@ -132,7 +132,7 @@ const VendorPannel = ({ url }) => {
             class="btn btn-outline-dark"
             style={{ width: "20rem" }}
           >
-            Drafts
+            Draft Products
           </button>
         </Link>
       </div>

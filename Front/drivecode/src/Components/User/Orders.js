@@ -78,6 +78,7 @@ const Orders = () => {
                   <th scope="col">Product</th>
                   <th scope="col">Price</th>
                   <th scope="col">Quantity</th>
+                  <th scope="col">Discounted Price</th>
                   <th scope="col">Status</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -90,8 +91,9 @@ const Orders = () => {
                         <tr key={itemIndex}>
                           <th scope="row">#</th>
                           <td>{item.name}</td>
-                          <td>{item.price}</td>
+                          <td>₹ {item.price}</td>
                           <td>{item.quantity}</td>
+                          <td>₹ {orderItem.bill}</td>
                           <td>
                             {item.status === 0
                               ? "Cancelled"

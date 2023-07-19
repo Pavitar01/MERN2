@@ -57,7 +57,7 @@ const SideMenu = ({ setOption }) => {
           </span>
 
           <div
-            style={{ height: "300px", width: "100%", overflow: "scroll" }}
+            style={{ height: "200px", width: "100%", overflow: "scroll" }}
             className="scrollBar"
           >
             {cat.map((category, index) => (
@@ -91,7 +91,7 @@ const SideMenu = ({ setOption }) => {
         src={banner2}
         width={250}
         height={200}
-        style={{ position: "absolute", bottom: "10px", left: "10%" }}
+        style={{ position: "absolute", bottom: "0", left: "10%" }}
       />
     </nav>
   );

@@ -47,7 +47,13 @@ const AddProducts = () => {
         setErr("All fields are required!");
         return;
       }
-
+      else if (name.trim() === "") {
+        setErr("Name is required!");
+        return;
+      } else if (des.trim() === "") {
+        setErr("Description is required!");
+        return;
+      }
       const photoBase64Array = await Promise.all(
         photos.map(async (photo) => {
           try {
@@ -109,6 +115,12 @@ const AddProducts = () => {
         photos.length === 0
       ) {
         setErr("All fields are required!");
+        return;
+      } else if (name.trim() === "") {
+        setErr("Name is required!");
+        return;
+      } else if (des.trim() === "") {
+        setErr("Description is required!");
         return;
       }
 

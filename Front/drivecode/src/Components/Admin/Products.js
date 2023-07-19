@@ -18,8 +18,6 @@ const AddProducts = () => {
   const [auth] = useAuth();
   const [photos, setPhotos] = useState([]);
 
-  const [details, setDetails] = useState([]);
-
   const image_to_base64 = (imageFile) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -45,6 +43,12 @@ const AddProducts = () => {
     try {
       if (!name || !des || !price || !quantity || photos.length === 0) {
         setErr("All fields are required!");
+        return;
+      } else if (name.trim() === "") {
+        setErr("Name is required!");
+        return;
+      } else if (des.trim() === "") {
+        setErr("Description is required!");
         return;
       }
 
@@ -106,6 +110,12 @@ const AddProducts = () => {
         photos.length === 0
       ) {
         setErr("All fields are required!");
+        return;
+      } else if (name.trim() === "") {
+        setErr("Name is required!");
+        return;
+      } else if ( des.trim() === "") {
+        setErr("Description is required!");
         return;
       }
       const photoBase64Array = await Promise.all(

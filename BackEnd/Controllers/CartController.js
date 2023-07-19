@@ -2,7 +2,7 @@ const { Product } = require("../Models/ProductModel");
 const User = require("../Models/UserModels");
 const Cart = require("../models/CartModel");
 
-const get_cart_items = async (req, res) => {
+const GetCartItem = async (req, res) => {
   const userId = req.params.id;
   try {
     let cart = await Cart.findOne({ userId });
@@ -23,7 +23,8 @@ const get_cart_items = async (req, res) => {
     res.status(500).send("Something went wrong");
   }
 };
-const update_cart_item = async (req, res) => {
+
+const UpdateCartItem = async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
   try {
@@ -68,7 +69,7 @@ const update_cart_item = async (req, res) => {
   }
 };
 
-const add_cart_item = async (req, res) => {
+const AddCartItem = async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
   try {
@@ -146,7 +147,6 @@ const add_cart_item = async (req, res) => {
   }
 };
 
-// Helper function to calculate the total bill of the cart
 const calculateCartBill = (cart) => {
   let totalBill = 0;
   for (const item of cart.items) {
@@ -155,12 +155,20 @@ const calculateCartBill = (cart) => {
       totalBill += item.bill;
     }
   }
+
+  if (
+    !isNaN(cart.bill) &&
+    !isNaN(cart.discount) &&
+    cart.discount > 0 &&
+    cart.discount <= 100
+  ) {
+    cart.bill -= (cart.bill * cart.discount) / 100;
+  }
+
   cart.bill = totalBill;
 };
 
-
-
-const delete_item = async (req, res) => {
+const DeleteItem = async (req, res) => {
   const userId = req.params.userId;
   const productId = req.params.itemId;
 
@@ -200,9 +208,9 @@ const emptyCart = async (req, res) => {
 };
 
 module.exports = {
-  add_cart_item,
-  get_cart_items,
-  delete_item,
-  update_cart_item,
-  emptyCart
+  AddCartItem,
+  GetCartItem,
+  DeleteItem,
+  UpdateCartItem,
+  emptyCart,
 };

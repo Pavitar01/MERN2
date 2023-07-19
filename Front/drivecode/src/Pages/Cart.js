@@ -25,20 +25,25 @@ const Cart = () => {
   const [val, setVal] = useState(0);
   const [Details, setDetails] = useState();
   const [messageApi, contextHolder] = message.useMessage();
-  const [totalBill, setTotalBill] = useState(0);
+  const [totalBill, setTotalBill] = useState(0); 
+  const [discount, setDiscount] = useState(0);
 
   const updateTotalBill = () => {
-    // Calculate the total bill based on the cart items
-    // const bill = cart.reduce(
-    //   (total, item) => total + item.price * item.quantity,
-    //   0
-    // );
-    // setTotalBill(bill);
+    let bill = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+
+    // discount to the total bill
+    if (discount > 0 && discount <= 100) {
+      bill -= (bill * discount) / 100;
+    }
+
+    setTotalBill(bill);
   };
 
   const handleChange = (value) => {
-    setDis(value);
+    setDiscount(value);
   };
+
+
   const navigate = useNavigate();
 
   const [isModalOpen1, setIsModalOpen1] = useState(false);
@@ -178,6 +183,10 @@ const Cart = () => {
 
     fetchData();
   }, [val]);
+  
+  useEffect(() => {
+    updateTotalBill();
+  }, [cart, discount]);
 
   useEffect(() => {
     let val = localStorage.getItem("userAuth");
@@ -191,13 +200,10 @@ const Cart = () => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   updateTotalBill();
-  // }, [cart]);
+  
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedItem, setEditedItem] = useState({});
-  const [bill, setBill] = useState(0);
 
   // setVal(editedItem.quantity)
 
@@ -523,7 +529,8 @@ const Cart = () => {
                 <span style={{ float: "right" }}>
                   &#8377;&nbsp;
                   {/* {totalBill - (totalBill * dis) / 100 || totalBill} */}
-                  {Number(cart2.bill) - (Number(cart2.bill) * 20) / 100 || ""}
+                  {/* {Number(cart2.bill) - (Number(cart2.bill) * 20) / 100 || ""} */}
+                  {totalBill}
                 </span>
               </h5>
             </div>

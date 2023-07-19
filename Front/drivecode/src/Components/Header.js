@@ -201,7 +201,7 @@ const Header = ({ prod, handleSearchString, searchString }) => {
                     style={{
                       fontSize: "15px",
                       marginTop: "-5px",
-                      marginLeft: "20px",
+                      marginLeft: "10px",
                     }}
                   >
                     {cart?.length}

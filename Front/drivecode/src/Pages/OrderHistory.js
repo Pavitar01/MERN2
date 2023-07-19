@@ -38,7 +38,7 @@ const OrderHistory = ({order}) => {
                   <tr key={itemIndex}>
                     <th scope="row">#</th>
                     <td>{item.name}</td>
-                    <td>{item.price}</td>
+                    <td>₹ {item.price}</td>
                     <td>{item.quantity}</td>
                     <td>Delivered</td>
                 {

@@ -61,12 +61,21 @@ const UpdateProfile = () => {
 
     e.preventDefault();
 
-    if (!formData.name.trim() || !formData.address.trim()) {
+  
+    if (!formData.name || !formData.address) {
       messageApi.open({
         type: "warning",
         content: "Please fill in all fields!",
       });
-    } else {
+    } 
+    
+    else if(formData.name.trim()==="" || formData.address.trim()===""){
+      messageApi.open({
+        type: "warning",
+        content: "Please fill in all fields!",
+      });
+    }
+     else {
       let photoBase64 = null;
       if (photo && photo.src) {
         try {

@@ -87,7 +87,7 @@ const UserPannel = ({url}) => {
             class="btn btn-outline-dark"
             style={{ width: "20rem" }}
           >
-            update profile
+            Update Profile
           </button>
         </Link>
         <Link to="/user/track-order">

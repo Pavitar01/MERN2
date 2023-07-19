@@ -24,16 +24,12 @@ const AllOrder = () => {
     setIsModalOpen(false);
   };
   const handleChange = async (value, orderIndex, itemIndex) => {
-    // Create a copy of the order state
     const updatedOrder = [...order];
 
-    // Update the status of the specific item
     updatedOrder[orderIndex].items[itemIndex].status = value;
 
-    // Update the order state with the modified order
     setOrder(updatedOrder);
 
-    // Make API call to update the status
     try {
       const orderId = updatedOrder[orderIndex]._id;
       const itemId = updatedOrder[orderIndex].items[itemIndex]._id;
@@ -43,7 +39,6 @@ const AllOrder = () => {
         `http://localhost:8000/api/order/update-status/${orderId}/${itemId}`,
         { status: value }
       );
-      console.log(response.data); // Log the response for debugging purposes
       if (response.data.message) {
         messageApi.open({
           type: "info",
@@ -71,6 +66,7 @@ const AllOrder = () => {
     const fetchedData = async () => {
       let val = localStorage.getItem("userAuth");
       val = JSON.parse(val);
+      console.log(val.user.id)
       const data = await axios.get(
         `http://localhost:8000/api/order/orders/seller/${val.user.id}`
       );
@@ -80,6 +76,7 @@ const AllOrder = () => {
           type: "success",
           content: "All orders fetched Successfully",
         });
+
         setOrder(data.data.orders);
         setTotalEarnings(data.data.totalEarnings);
       }
@@ -148,7 +145,7 @@ const AllOrder = () => {
                         <tr key={itemIndex}>
                           <th scope="row">#</th>
                           <td>{item.name}</td>
-                          <td>{item.price}</td>
+                          <td> &#8377; {item.price}</td>
                           <td>{item.quantity}</td>
                           <td>
                             {item.status === 1
@@ -247,7 +244,7 @@ const AllOrder = () => {
                     <h3>{order.length}</h3>
                   </td>
                   <td>
-                    <h3> &#8377; {totalEarnings}</h3>
+                    <h3> ₹ {totalEarnings}</h3>
                   </td>
                 </tr>
               </tbody>

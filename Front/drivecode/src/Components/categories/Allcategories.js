@@ -17,6 +17,7 @@ import SideMenu from "../../Pages/SideMenu";
 import Middle from "../Middle";
 import { useNavigate } from "react-router-dom";
 import banner from "../../Newfolder/banner.jpg";
+import img from "../../Newfolder/banner1.jpg"
 
 const Allcategories = () => {
   const [prod, setProd] = useState([]);
@@ -168,7 +169,7 @@ const Allcategories = () => {
                 </div>
                 <div>
                   <img
-                    src="https://th.bing.com/th/id/R.d1ed34ac8f711d6d807bacb7f217852c?rik=D3hF6b%2bxzryonA&riu=http%3a%2f%2fgraphicgoogle.com%2fwp-content%2fuploads%2f2017%2f10%2fFacebook-Fashion-Big-Sale-Banner.jpg&ehk=xAR7O2yBftDuPOZZ2li0TEjvnMDEw2%2fuJhTgzEniJoc%3d&risl=&pid=ImgRaw&r=0"
+                    src={img}
                     width="100%"
                     height="100%"
                   />

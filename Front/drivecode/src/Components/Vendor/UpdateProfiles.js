@@ -5,7 +5,6 @@ import { Button, Modal, message } from "antd";
 import axios from "axios";
 import VendorPannel from "./VendorPannel";
 import { useNavigate } from "react-router-dom";
-import imgurl from "../../assets/yourlogo.png";
 const image_to_base64 = (imageFile) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -21,7 +20,6 @@ const UpdateProfiles = () => {
   const [auth, setAuth] = useAuth();
   const [all, setData] = useState("");
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [val, setVal] = useState(0);
   const [imagePreview, setImagePreview] = useState(null);
@@ -100,7 +98,16 @@ const UpdateProfiles = () => {
         type: "warning",
         content: "Please fill in all fields!",
       });
-    } else {
+    } 
+    
+    else if(formData.name.trim()==="" || formData.address.trim()===""){
+      messageApi.open({
+        type: "warning",
+        content: "Please fill in all fields!",
+      });
+    }
+    
+    else {
       let photoBase64 = null;
       if (photo && photo.src) {
         try {
